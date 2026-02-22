@@ -1,0 +1,56 @@
+{
+  "name": "buildlog",
+  "version": "0.1.0",
+  "description": "CLI tool that reads Claude Code transcripts and generates build journals and social content",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/leonardomjq/buildlog.git"
+  },
+  "bugs": {
+    "url": "https://github.com/leonardomjq/buildlog/issues"
+  },
+  "homepage": "https://github.com/leonardomjq/buildlog#readme",
+  "keywords": [
+    "buildlog",
+    "claude-code",
+    "build-in-public",
+    "dev-journal",
+    "cli",
+    "ai-coding",
+    "transcript"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "bin": {
+    "buildlog": "./dist/cli.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "next build",
+    "build:cli": "tsc -p tsconfig.cli.json",
+    "start": "next start",
+    "typecheck": "tsc --noEmit"
+  },
+  "packageManager": "pnpm@10.28.0",
+  "dependencies": {
+    "@tailwindcss/postcss": "^4.2.0",
+    "@types/node": "^25.2.3",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "clsx": "^2.1.1",
+    "framer-motion": "^12.34.2",
+    "lucide-react": "^0.574.0",
+    "next": "^16.1.6",
+    "postcss": "^8.5.6",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "tailwind-merge": "^3.5.0",
+    "tailwindcss": "^4.2.0",
+    "typescript": "^5.9.3"
+  }
+}
