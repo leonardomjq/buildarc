@@ -1,18 +1,18 @@
 {
-  "name": "buildlog",
+  "name": "buildarc",
   "version": "0.1.0",
   "description": "CLI tool that reads Claude Code transcripts and generates build journals and social content",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/leonardomjq/buildlog.git"
+    "url": "git+https://github.com/leonardomjq/buildarc.git"
   },
   "bugs": {
-    "url": "https://github.com/leonardomjq/buildlog/issues"
+    "url": "https://github.com/leonardomjq/buildarc/issues"
   },
-  "homepage": "https://github.com/leonardomjq/buildlog#readme",
+  "homepage": "https://github.com/leonardomjq/buildarc#readme",
   "keywords": [
-    "buildlog",
+    "buildarc",
     "claude-code",
     "build-in-public",
     "dev-journal",
@@ -24,7 +24,7 @@
     "node": ">=18"
   },
   "bin": {
-    "buildlog": "./dist/cli.js"
+    "buildarc": "./dist/cli.js"
   },
   "files": [
     "dist"

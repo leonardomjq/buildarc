@@ -21,7 +21,7 @@ export function Logo({ size = "sm", href, className }: LogoProps) {
         className
       )}
     >
-      build<span className="text-text-dim">log</span>
+      build<span className="text-text-dim">arc</span>
     </span>
   );
 

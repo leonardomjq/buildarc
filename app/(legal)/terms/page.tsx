@@ -1,39 +1,39 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Terms of Service — buildlog",
+  title: "Terms of Service — buildarc",
 };
 
 const sections = [
   {
     label: "01",
-    title: "About buildlog",
+    title: "About buildarc",
     content:
-      "buildlog is a free, open-source CLI tool distributed under the MIT license. It reads Claude Code conversation transcripts from your local filesystem and generates build journals and social content. There are no accounts, subscriptions, or payments.",
+      "buildarc is a free, open-source CLI tool distributed under the MIT license. It reads Claude Code conversation transcripts from your local filesystem and generates build journals and social content. There are no accounts, subscriptions, or payments.",
   },
   {
     label: "02",
     title: "License",
     content:
-      "buildlog is released under the MIT license. You are free to use, modify, and distribute the software. See the LICENSE file in the GitHub repository for full terms.",
+      "buildarc is released under the MIT license. You are free to use, modify, and distribute the software. See the LICENSE file in the GitHub repository for full terms.",
   },
   {
     label: "03",
     title: "Acceptable Use",
     content:
-      "You may use buildlog for any lawful purpose. The generated output (build journals, social posts) is yours to use, publish, and share as you wish.",
+      "You may use buildarc for any lawful purpose. The generated output (build journals, social posts) is yours to use, publish, and share as you wish.",
   },
   {
     label: "04",
     title: "No Warranty",
     content:
-      "buildlog is provided \"as is\" without warranties of any kind, express or implied. We do not guarantee the accuracy or completeness of generated build journals. Use your judgement when publishing generated content.",
+      "buildarc is provided \"as is\" without warranties of any kind, express or implied. We do not guarantee the accuracy or completeness of generated build journals. Use your judgement when publishing generated content.",
   },
   {
     label: "05",
     title: "Limitation of Liability",
     content:
-      "In no event shall the authors or maintainers of buildlog be liable for any claim, damages, or other liability arising from the use of the software.",
+      "In no event shall the authors or maintainers of buildarc be liable for any claim, damages, or other liability arising from the use of the software.",
   },
   {
     label: "06",

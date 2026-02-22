@@ -1,39 +1,39 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy — buildlog",
+  title: "Privacy Policy — buildarc",
 };
 
 const sections = [
   {
     label: "01",
-    title: "What buildlog Does",
+    title: "What buildarc Does",
     content:
-      "buildlog is an open-source CLI tool that reads Claude Code conversation transcripts (.jsonl files) stored on your local machine and generates build journals and social content. All processing happens locally on your computer. No data is sent to any server.",
+      "buildarc is an open-source CLI tool that reads Claude Code conversation transcripts (.jsonl files) stored on your local machine and generates build journals and social content. All processing happens locally on your computer. No data is sent to any server.",
   },
   {
     label: "02",
     title: "Data We Collect",
     content:
-      "buildlog does not collect, transmit, or store any personal data. There are no accounts, no analytics, no telemetry, and no network requests. Your transcript files never leave your machine.",
+      "buildarc does not collect, transmit, or store any personal data. There are no accounts, no analytics, no telemetry, and no network requests. Your transcript files never leave your machine.",
   },
   {
     label: "03",
     title: "Landing Page",
     content:
-      "This website (buildlog.dev) may use privacy-friendly, cookieless analytics to measure page views. No personal information is collected or shared with third parties.",
+      "This website (buildarc.dev) may use privacy-friendly, cookieless analytics to measure page views. No personal information is collected or shared with third parties.",
   },
   {
     label: "04",
     title: "Open Source",
     content:
-      "buildlog is open source under the MIT license. You can inspect the source code to verify that no data collection occurs. The repository is publicly available on GitHub.",
+      "buildarc is open source under the MIT license. You can inspect the source code to verify that no data collection occurs. The repository is publicly available on GitHub.",
   },
   {
     label: "05",
     title: "Contact",
     content:
-      "For privacy-related questions, open an issue on the GitHub repository at github.com/leonardomjq/buildlog.",
+      "For privacy-related questions, open an issue on the GitHub repository at github.com/leonardomjq/buildarc.",
   },
 ];
 

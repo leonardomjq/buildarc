@@ -1,4 +1,4 @@
-# buildlog
+# buildarc
 
 CLI tool that reads Claude Code conversation transcripts (`.jsonl` files) and generates build journals and social content.
 
@@ -19,7 +19,7 @@ When done making changes, run `pnpm typecheck` to verify.
 
 Two build targets in one repo:
 
-- **`src/` -> `dist/`**: CLI tool, compiled via `tsc -p tsconfig.cli.json`, published to npm as `buildlog`. Pure Node.js, zero runtime dependencies.
+- **`src/` -> `dist/`**: CLI tool, compiled via `tsc -p tsconfig.cli.json`, published to npm as `buildarc`. Pure Node.js, zero runtime dependencies.
 - **`app/`**: Next.js landing page, deployed to Vercel. Uses `lib/`, `components/`, `app/globals.css`.
 
 They don't share code. The CLI uses Node built-ins only. The landing page is React/Next.js.
@@ -38,6 +38,28 @@ They don't share code. The CLI uses Node built-ins only. The landing page is Rea
 1. **Parser** -- Read `.jsonl` files, group events by sessionId, filter to user/assistant types
 2. **Extractor** -- Regex-based classification of key moments (DECISION, PIVOT, EMOTION, DIRECTIVE, QUESTION)
 3. **Formatter** -- Output as Markdown, JSON, Tweet thread, or LinkedIn post
+
+## Voice & Messaging
+
+The full product marketing context lives in `.claude/product-marketing-context.md`. Hard rules:
+
+**Audience:** Claude Code power users who build in public (or want to). Builders, not "developers" in the enterprise sense. People who ship projects and want to share the journey.
+
+**Core JTBD:** "Turn my AI coding sessions into a story I can share." Not "track developer activity."
+
+**Tone:** Understated and genuine. Builder-to-builder. Like showing someone a tool you made for yourself. Not selling — sharing. Dry humor welcome. No hype.
+
+**Words to use:** story, journal, sessions, build in public, narrative, decisions, pivots, moments, share, ship, recover, builder, journey, thread
+**Words to avoid:** pipeline, entities, signals, intelligence, opportunity, demand, monetize, premium, upgrade, analytics, dashboard, tracking
+
+**Key framings:**
+- "Your build story, recovered" — not "track your AI sessions"
+- "One command" — not "set up your account"
+- "`npx buildarc`" IS the CTA — not "Start Free"
+- Output examples are the best marketing — show the generated tweet thread, not feature lists
+- The ScoutAgent origin story is an asset — honest, relatable, proves dogfooding
+
+**Anti-persona:** People who don't use Claude Code. Enterprise teams with documentation workflows. People who want AI-written blog posts (buildarc extracts, it doesn't ghost-write). People who think building in public is cringe.
 
 ## Code style
 
