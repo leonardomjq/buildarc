@@ -2,7 +2,7 @@
 
 CLI tool that reads Claude Code conversation transcripts (`.jsonl` files) and generates build journals and social content.
 
-**One-liner:** "git log for your AI coding sessions."
+**One-liner:** "Your build story, recovered."
 
 ## Commands
 
@@ -47,9 +47,9 @@ The full product marketing context lives in `.claude/product-marketing-context.m
 
 **Core JTBD:** "Turn my AI coding sessions into a story I can share." Not "track developer activity."
 
-**Tone:** Understated and genuine. Builder-to-builder. Like showing someone a tool you made for yourself. Not selling — sharing. Dry humor welcome. No hype.
+**Tone:** Editorial and genuine. Builder-to-builder. Like a journal entry, not a sales page. Understated confidence — the typography and output do the talking. Dry humor welcome. No hype.
 
-**Words to use:** story, journal, sessions, build in public, narrative, decisions, pivots, moments, share, ship, recover, builder, journey, thread
+**Words to use:** story, journal, sessions, build in public, narrative, decisions, pivots, moments, share, ship, recover, recovered, builder, journey, thread, content, post
 **Words to avoid:** pipeline, entities, signals, intelligence, opportunity, demand, monetize, premium, upgrade, analytics, dashboard, tracking
 
 **Key framings:**
