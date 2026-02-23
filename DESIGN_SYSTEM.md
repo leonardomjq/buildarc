@@ -1,28 +1,28 @@
-# ScoutAgent Design System
+# Buildarc Design System
 
-Dark, warm, sophisticated. Teal-green signal accents. Intelligence briefing aesthetic.
+Editorial grit meets terminal velocity. High-contrast, tactile, and asymmetric. A living build journal.
 
 ---
 
 ## 1. Color Palette
+
+Primary shifts from "intelligence" to "active builder."
 
 All colors are CSS custom properties defined in `app/globals.css` via `@theme`.
 
 | Token | Hex | Usage |
 |-------|-----|-------|
 | `bg` | `#0A0A0A` | Page background |
-| `surface` | `#151515` | Cards, sections, panels |
-| `surface-elevated` | `#1A1A1A` | Hover states, raised elements |
-| `surface-glass` | `rgba(255,255,255,0.03)` | Glass morphism panels |
-| `border` | `#222222` | Default borders |
-| `text` | `#F5F5F0` | Primary text (warm off-white) |
-| `text-muted` | `#8A9EA0` | Secondary text (blue-gray) |
-| `text-dim` | `#525252` | Labels, dividers, timestamps |
-| `accent-green` | `#00E5B3` | Primary accent — signals, CTAs, success |
-| `accent-orange` | `#FF6B35` | Urgency, deadlines, scarcity |
-| `accent-red` | `#FF3366` | Errors, danger, negative signals |
-| `accent-amber` | `#FFB800` | Warnings, caution |
-| `accent-blue` | `#00AAFF` | Info, links, neutral highlights |
+| `surface` | `#111111` | Artifact cards, terminal blocks |
+| `surface-glass` | `rgba(255,255,255,0.02)` | Floating social thread cards |
+| `border` | `#1F1F1F` | Default borders |
+| `text` | `#F5F5F0` | Primary content (warm off-white) |
+| `text-muted` | `#949494` | Narrative text, secondary descriptions |
+| `text-dim` | `#404040` | Metadata, marginalia, thread lines |
+| `accent-blue` | `#00AAFF` | The "Blueprint" accent — highlights, active states |
+| `accent-amber` | `#FFB800` | "Decision" moments, pivots |
+| `accent-orange` | `#FF6B35` | "Directive" moments, high-impact changes |
+| `accent-green` | `#00E5B3` | Success, command execution, npx status |
 
 Usage: `text-accent-green`, `bg-surface`, `border-text-dim/30`, etc.
 
@@ -30,96 +30,92 @@ Usage: `text-accent-green`, `bg-surface`, `border-text-dim/30`, etc.
 
 ## 2. Typography
 
-Four-font hierarchy loaded via `next/font` in the root layout:
+The "Editorial Soul" hierarchy. Four fonts loaded via `next/font` in the root layout:
 
 | Role | Font | CSS variable | Usage |
 |------|------|-------------|-------|
-| Display | Space Grotesk | `--font-display` | Headlines, section titles |
-| Body | IBM Plex Serif | `--font-serif` | Paragraphs, descriptions, evidence |
-| Data | JetBrains Mono | system `font-mono` | Labels, badges, stats, code |
-| UI | Inter | system default | Buttons, navigation, form elements |
+| Display | Instrument Serif | `--font-display` | Massive, editorial headlines (Hero). Weight 400 only — never use `font-bold`. |
+| Narrative | Lora | `--font-serif` | Build stories, "Journal Entry" paragraphs. Variable weight 400–700. |
+| Metadata | JetBrains Mono | `font-mono` | Command lines, session counts, dates |
+| UI | Inter | system default | Functional buttons, navigation |
 
 ### Size scale
-- Section label: `text-[10px] font-mono uppercase tracking-widest`
-- Body: `text-sm` (14px)
-- Section heading: `text-2xl sm:text-3xl md:text-4xl font-bold`
-- Hero heading: `text-[2.5rem] sm:text-[3.5rem] md:text-[5rem] lg:text-[6rem]`
-- Stat number: `text-lg font-bold font-mono`
+
+- **Marginalia:** `text-[10px] font-mono tracking-widest text-text-dim`
+- **Body:** `text-base font-serif leading-relaxed`
+- **Artifact Title:** `text-xl font-display`
+- **Section Headline:** `text-3xl sm:text-4xl md:text-5xl leading-[1.1] tracking-[-0.01em]`
+- **Hero Headline:** `text-[3rem] sm:text-[4.5rem] md:text-[7rem] leading-[1.05] tracking-[-0.02em]`
 
 ---
 
-## 3. Spacing
+## 3. Textures (Primary)
 
-Consistent padding/gap patterns:
+These are no longer subtle; they define the "surface" of the tool.
 
-| Context | Value |
-|---------|-------|
-| Section padding | `px-6 py-20` |
-| Card padding (compact) | `p-4` |
-| Card padding (default) | `p-5` |
-| Card padding (spacious) | `p-6` |
-| Grid gap | `gap-6` (cards), `gap-8` (sections) |
-| Element spacing | `mb-2` (tight), `mb-4` (normal), `mb-6` (loose), `mb-12` (section) |
-| Max content width | `max-w-3xl` (narrow), `max-w-4xl` (medium), `max-w-5xl` (wide) |
+| Class | Effect | Usage |
+|-------|--------|-------|
+| `texture-paper` | Horizontal scan lines | Apply to all artifact cards to mimic printed logs |
+| `texture-noise` | Fractal noise grain | Global body overlay (0.04 opacity) for "ink" feel |
+| `texture-ink` | Subtle bleed effect | Apply to large Display headings |
 
 ---
 
-## 4. Border Radius
+## 4. Layout Patterns: The Asymmetric Thread
 
-| Token | Value | Usage |
-|-------|-------|-------|
-| `rounded-sm` | 6px | Badges, tags |
-| `rounded` | 8px | Buttons, inputs |
-| `rounded-lg` | 12px | Cards, panels |
-| `rounded-full` | 9999px | Pills, avatars |
+### The "Vertical Spine"
 
----
+A 1px vertical line (`bg-text-dim/20`) that anchors the page.
 
-## 5. Shadows
+- Aligned to `left: 2rem` on mobile, `left: 15%` on desktop.
+- Components "hook" into this line with a horizontal 10px tick.
 
-| Token | Value | Usage |
-|-------|-------|-------|
-| `shadow-subtle` | `0 1px 2px rgba(0,0,0,0.4)` | Slight depth |
-| `shadow-elevated` | `0 4px 12px rgba(0,0,0,0.5)` | Floating elements |
-| `shadow-glow` | `0 0 30px -10px rgba(0,229,179,0.15)` | Accent glow (Pro cards, CTAs) |
+### The Artifact Stack
 
-Custom glow: `shadow-[0_0_40px_-10px_rgba(0,229,179,0.15)]` for larger glow radius.
+Cards should never be perfectly aligned.
+
+- Use `ml-[10%]` for the first card, `mr-[5%]` for the second.
+- Use `z-index` and `shadow-elevated` to overlap cards slightly, creating a "scattered on a desk" feel.
 
 ---
 
-## 6. Textures
+## 5. Components
 
-Utility classes for subtle background patterns:
+### Artifact Card (Social Output)
 
-| Class | Effect |
-|-------|--------|
-| `texture-graph` | 40px grid lines (0.03 opacity) |
-| `texture-paper` | Horizontal scan lines (0.02 opacity) |
-| `texture-noise` | Fractal noise grain (0.04 opacity) |
-
-Apply to cards and sections for the intelligence-briefing feel. `texture-paper` is most common on landing cards.
-
----
-
-## 7. Glass Morphism
-
-Pattern for elevated surfaces:
-```
-bg-surface-glass backdrop-blur-xl border border-border
+```tsx
+<div className="bg-surface-glass texture-paper border border-border rounded-sm p-6 shadow-elevated">
+  <div className="font-mono text-[10px] text-accent-blue mb-4">SESSION_04_PIVOT.jsonl</div>
+  <div className="font-serif italic text-text mb-6">"I realized the parser was too slow, so I stripped the dependencies..."</div>
+  {/* Social icons + Timestamp */}
+</div>
 ```
 
-For sticky nav/overlays:
+### The Command Block
+
+```tsx
+<div className="inline-flex items-center gap-3 bg-accent-green text-bg font-mono px-4 py-2 rounded shadow-glow">
+  <span className="opacity-70">$</span>
+  <span>npx buildarc</span>
+</div>
 ```
-bg-surface/80 backdrop-blur-md
+
+### Moment Badge
+
+```tsx
+// For highlighting key story beats
+<Badge variant="amber" shape="tag">PIVOT</Badge>
+<Badge variant="orange" shape="tag">DIRECTIVE</Badge>
 ```
 
 ---
 
-## 8. Motion
+## 6. Motion
 
 All presets in `lib/motion.ts`. Never inline raw Framer Motion objects.
 
 ### Basic
+
 | Preset | Usage |
 |--------|-------|
 | `fadeInUp` | Simple fade + slide for dashboard elements |
@@ -127,80 +123,82 @@ All presets in `lib/motion.ts`. Never inline raw Framer Motion objects.
 | `viewportFadeIn(delay)` | Scroll-triggered fade with optional delay |
 
 ### Premium (clip-path reveals)
+
 | Preset | Usage |
 |--------|-------|
 | `clipRevealStagger` / `clipRevealItem` | Section content reveals (hidden/visible states) |
 | `scanLine` | Horizontal line wipe effect |
+| `ghostCardStagger` / `ghostCardItem` | Hero tweet card stagger animation |
+| `stampReveal` | Stamp/seal reveal effect |
 
 ### Constants
+
 - `DURATION`: `{ fast: 0.15, normal: 0.2, slow: 0.4 }`
 - `EASE`: `{ out: [0.16, 1, 0.3, 1], inOut: [0.4, 0, 0.2, 1] }`
 
 ---
 
-## 9. Component API
+## 7. Component API
 
 All components in `components/ui/`. Use `cn()` from `@/lib/utils` for class merging.
 
 ### Button
+
 ```tsx
 <Button variant="primary|secondary|ghost" size="sm|md|lg" />
 <ButtonLink variant="primary|secondary|ghost" size="sm|md|lg" href="..." />
 ```
 
 ### Card
+
 ```tsx
 <Card variant="default|glass" padding="compact|default|spacious" />
 ```
 
 ### Badge
+
 ```tsx
 <Badge variant="default|success|warning|danger|info" shape="pill|tag" />
 ```
 
 ### Input
+
 ```tsx
 <Input icon={<SearchIcon />} />
 ```
 
 ---
 
-## 10. Patterns
+## 8. Patterns
 
 ### Section structure (landing)
+
 ```tsx
-<section className="px-6 py-20 max-w-5xl mx-auto">
-  <div className="font-mono text-[10px] text-text-dim uppercase tracking-widest mb-2">
-    Section Label
+<section className="relative px-6 py-20">
+  <ThreadNode />
+  <div className="ml-0 md:ml-24 lg:ml-32 max-w-3xl">
+    <div className="font-mono text-[10px] text-text-dim uppercase tracking-widest mb-2">
+      Section Label
+    </div>
+    <h2 className="font-[family-name:var(--font-display)] text-2xl sm:text-3xl md:text-4xl font-bold text-text mb-4">
+      Headline
+    </h2>
+    <p className="font-[family-name:var(--font-serif)] text-text-muted text-sm mb-12">
+      Description
+    </p>
+    {/* Content */}
   </div>
-  <h2 className="font-[family-name:var(--font-display)] text-2xl sm:text-3xl md:text-4xl font-bold text-text mb-4">
-    Headline
-  </h2>
-  <p className="font-[family-name:var(--font-serif)] text-text-muted text-sm mb-12">
-    Description
-  </p>
-  {/* Content */}
 </section>
 ```
 
-### Tier gating (blur gate)
-```tsx
-<div className="relative border-t border-text-dim/20">
-  <div className="blur-sm select-none pointer-events-none" aria-hidden>
-    {/* Pro content skeleton */}
-  </div>
-  <div className="absolute inset-0 flex items-center justify-center">
-    {/* Lock + upgrade CTA */}
-  </div>
-</div>
-```
-
 ### Responsive breakpoints
+
 - Mobile-first. `sm:` (640px), `md:` (768px), `lg:` (1024px).
-- Grid: `grid-cols-1 md:grid-cols-2` (pricing), `grid-cols-1 md:grid-cols-3` (steps).
+- Grid: `grid-cols-1 md:grid-cols-2` (side-by-side), `grid-cols-1 md:grid-cols-[3fr_2fr]` (before/after).
 - Text scale: always include `sm:` and `md:` variants for headlines.
 
 ### Z-index layers
+
 | Token | Value | Usage |
 |-------|-------|-------|
 | `z-sticky` | 30 | Sticky headers |

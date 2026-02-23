@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono, Space_Grotesk, IBM_Plex_Serif } from "next/font/google";
+import { Inter, JetBrains_Mono, Instrument_Serif, Lora } from "next/font/google";
 import { ToastProvider } from "@/components/toast";
 import "./globals.css";
 
@@ -15,15 +15,15 @@ const jetbrainsMono = JetBrains_Mono({
   variable: "--font-mono",
 });
 
-const spaceGrotesk = Space_Grotesk({
+const instrumentSerif = Instrument_Serif({
   subsets: ["latin"],
+  weight: "400",
   display: "swap",
   variable: "--font-display",
 });
 
-const ibmPlexSerif = IBM_Plex_Serif({
+const lora = Lora({
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
   display: "swap",
   variable: "--font-serif",
 });
@@ -33,15 +33,15 @@ const BASE_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://buildarc.dev";
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
-    default: "buildarc — git log for your AI coding sessions",
+    default: "buildarc — your build story, recovered",
     template: "%s | buildarc",
   },
   description:
-    "CLI tool that reads Claude Code transcripts and generates build journals and social content. Turn 50 AI coding sessions into a story.",
+    "One command turns your Claude Code sessions into tweet threads, build journals, and LinkedIn posts. Your build story, recovered.",
   openGraph: {
-    title: "buildarc — git log for your AI coding sessions",
+    title: "buildarc — your build story, recovered",
     description:
-      "CLI tool that reads Claude Code transcripts and generates build journals and social content. Turn 50 AI coding sessions into a story.",
+      "One command turns your Claude Code sessions into tweet threads, build journals, and LinkedIn posts. Your build story, recovered.",
     url: BASE_URL,
     siteName: "buildarc",
     locale: "en_US",
@@ -49,9 +49,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "buildarc — git log for your AI coding sessions",
+    title: "buildarc — your build story, recovered",
     description:
-      "CLI tool that reads Claude Code transcripts and generates build journals and social content. Turn 50 AI coding sessions into a story.",
+      "One command turns your Claude Code sessions into tweet threads, build journals, and LinkedIn posts. Your build story, recovered.",
   },
   robots: {
     index: true,
@@ -67,7 +67,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`dark ${inter.variable} ${jetbrainsMono.variable} ${spaceGrotesk.variable} ${ibmPlexSerif.variable}`}
+      className={`dark ${inter.variable} ${jetbrainsMono.variable} ${instrumentSerif.variable} ${lora.variable}`}
     >
       <body className="min-h-screen bg-bg text-text font-sans antialiased">
         <ToastProvider>{children}</ToastProvider>

@@ -8,12 +8,25 @@ export function LandingFooter() {
 
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4 font-mono text-xs">
         <div className="text-text-dim uppercase tracking-widest">
-          End of Briefing
+          End of Arc
         </div>
 
         <nav className="flex items-center gap-6 text-text-muted">
-          <a href="#pricing" className="hover:text-text transition-colors">
-            Pricing
+          <a
+            href="https://github.com/leonardomjq/buildarc"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-text transition-colors"
+          >
+            GitHub
+          </a>
+          <a
+            href="https://www.npmjs.com/package/buildarc"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-text transition-colors"
+          >
+            npm
           </a>
           <Link href="/terms" className="hover:text-text transition-colors">
             Terms
@@ -21,16 +34,10 @@ export function LandingFooter() {
           <Link href="/privacy" className="hover:text-text transition-colors">
             Privacy
           </Link>
-          <Link href="/login" className="hover:text-text transition-colors">
-            Login
-          </Link>
-          <Link href="/signup" className="hover:text-text transition-colors">
-            Signup
-          </Link>
         </nav>
 
         <div className="text-text-dim/50 uppercase tracking-widest text-[10px]">
-          Built by founders, for founders
+          MIT License
         </div>
       </div>
     </footer>
