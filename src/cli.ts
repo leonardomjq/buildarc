@@ -4,7 +4,6 @@ import { existsSync, mkdirSync, readFileSync, readdirSync, statSync } from "node
 import { readFile, writeFile } from "node:fs/promises";
 import { homedir } from "node:os";
 import { join, resolve } from "node:path";
-import { createInterface } from "node:readline";
 import { extractBuildLog } from "./extractor.js";
 import { formatJson, formatMarkdown } from "./formatter.js";
 import { parseProject } from "./parser.js";
@@ -28,6 +27,24 @@ const green = noColor ? (s: string) => s : (s: string) => `\x1b[32m${s}\x1b[39m`
 const cyan = noColor ? (s: string) => s : (s: string) => `\x1b[36m${s}\x1b[39m`;
 const yellow = noColor ? (s: string) => s : (s: string) => `\x1b[33m${s}\x1b[39m`;
 const red = noColor ? (s: string) => s : (s: string) => `\x1b[31m${s}\x1b[39m`;
+
+// ── Layout helpers ──────────────────────────────────────────────────
+
+function stripAnsi(s: string): string {
+  // biome-ignore lint/suspicious/noControlCharactersInRegex: intentional ANSI escape matching
+  return s.replace(/\x1b\[[0-9;]*m/g, "");
+}
+
+function rightAlign(left: string, right: string, width = 72): string {
+  const visibleLeft = stripAnsi(left).length;
+  const visibleRight = stripAnsi(right).length;
+  const gap = Math.max(1, width - visibleLeft - visibleRight);
+  return left + " ".repeat(gap) + right;
+}
+
+function rule(): string {
+  return dim("\u2500".repeat(16));
+}
 
 // ── Logging (stderr so content goes to files cleanly) ───────────────
 
@@ -172,51 +189,102 @@ function autoDetectProject(): string | null {
   }
 }
 
-// ── Interactive menu ────────────────────────────────────────────────
+// ── Arrow-key menu ─────────────────────────────────────────────────
 
-async function showMenu(): Promise<string | null> {
-  const rl = createInterface({
-    input: process.stdin,
-    output: process.stderr,
-  });
+interface MenuItem {
+  label: string;
+  value: string | null;
+}
 
-  log("");
-  log(bold("  What do you want to share?"));
-  log("");
-  log(`    ${cyan("1.")} Tweet thread`);
-  log(`    ${cyan("2.")} LinkedIn post`);
-  log(`    ${cyan("3.")} Build journal`);
-  log(`    ${cyan("4.")} All of the above`);
-  log(`    ${cyan("5.")} Just the summary`);
-  log("");
+async function showArrowMenu(title: string, items: MenuItem[]): Promise<string | null> {
+  let selected = 0;
+
+  function render(clear = false) {
+    if (clear) {
+      // Move cursor up past the items + title + blank lines, then clear
+      process.stderr.write(`\x1b[${items.length + 3}A`);
+    }
+    process.stderr.write("\x1b[J"); // clear from cursor to end
+    log("");
+    log(bold(`  ${title}`));
+    log("");
+    for (let i = 0; i < items.length; i++) {
+      const pointer = i === selected ? cyan("❯") : " ";
+      const label = i === selected ? bold(items[i].label) : items[i].label;
+      log(`  ${pointer} ${label}`);
+    }
+  }
+
+  render();
 
   return new Promise((resolve) => {
-    rl.on("close", () => resolve(null)); // Ctrl+C or Ctrl+D
-    rl.question(`  ${dim("Choose (1-5):")} `, (answer) => {
-      rl.close();
-      const choice = answer.trim();
-      switch (choice) {
-        case "1":
-          resolve("tweet");
-          break;
-        case "2":
-          resolve("linkedin");
-          break;
-        case "3":
-          resolve("journal");
-          break;
-        case "4":
-          resolve("all");
-          break;
-        case "5":
-        case "":
-          resolve(null);
-          break;
-        default:
-          resolve(null);
+    const stdin = process.stdin;
+    const wasRaw = stdin.isRaw;
+    stdin.setRawMode(true);
+    stdin.resume();
+
+    function cleanup() {
+      stdin.setRawMode(wasRaw ?? false);
+      stdin.removeListener("data", onKey);
+      stdin.pause();
+    }
+
+    function onKey(data: Buffer) {
+      const key = data.toString();
+
+      // Ctrl+C / Ctrl+D
+      if (key === "\x03" || key === "\x04") {
+        cleanup();
+        log("");
+        resolve(null);
+        return;
       }
-    });
+
+      // Enter
+      if (key === "\r" || key === "\n") {
+        cleanup();
+        log("");
+        resolve(items[selected].value);
+        return;
+      }
+
+      // Arrow up / k
+      if (key === "\x1b[A" || key === "k") {
+        selected = (selected - 1 + items.length) % items.length;
+        render(true);
+        return;
+      }
+
+      // Arrow down / j
+      if (key === "\x1b[B" || key === "j") {
+        selected = (selected + 1) % items.length;
+        render(true);
+        return;
+      }
+
+      // Number keys for quick select
+      const num = Number.parseInt(key, 10);
+      if (num >= 1 && num <= items.length) {
+        selected = num - 1;
+        cleanup();
+        log("");
+        resolve(items[selected].value);
+        return;
+      }
+    }
+
+    stdin.on("data", onKey);
   });
+}
+
+async function showMenu(): Promise<string | null> {
+  return showArrowMenu("What do you want to share?", [
+    { label: "X thread", value: "tweet" },
+    { label: "LinkedIn post", value: "linkedin" },
+    { label: "Build journal", value: "journal" },
+    { label: "All of the above", value: "all" },
+    { label: "Just the summary", value: null },
+  ]);
 }
 
 // ── Style sub-menu ──────────────────────────────────────────────────
@@ -230,31 +298,12 @@ async function showStyleMenu(format: ContentFormat): Promise<string | null> {
   const styles = STYLE_OPTIONS[format];
   if (!styles || styles.length <= 1) return null;
 
-  const rl = createInterface({
-    input: process.stdin,
-    output: process.stderr,
-  });
+  const items = styles.map((s) => ({
+    label: STYLE_LABELS[s] ?? s,
+    value: s,
+  }));
 
-  log("");
-  log(bold("  What vibe?"));
-  log("");
-  for (let j = 0; j < styles.length; j++) {
-    log(`    ${cyan(`${j + 1}.`)} ${STYLE_LABELS[styles[j]] ?? styles[j]}`);
-  }
-  log("");
-
-  return new Promise((resolve) => {
-    rl.on("close", () => resolve(null));
-    rl.question(`  ${dim(`Choose (1-${styles.length}):`)} `, (answer) => {
-      rl.close();
-      const idx = Number.parseInt(answer.trim(), 10) - 1;
-      if (idx >= 0 && idx < styles.length) {
-        resolve(styles[idx]);
-      } else {
-        resolve(null); // defaults to narrative
-      }
-    });
-  });
+  return showArrowMenu("What vibe?", items);
 }
 
 // ── Help text ───────────────────────────────────────────────────────
@@ -287,7 +336,7 @@ ${bold("OPTIONS")}
   --sessions <N>       Only include the last N sessions
   --output, -o <DIR>   Output directory (default: .buildarc/)
   --no-ai              Skip AI content generation, extraction only
-  --tweet              Generate X/Twitter thread (skips menu)
+  --tweet              Generate X thread (skips menu)
   --linkedin           Generate LinkedIn post (skips menu)
   --journal            Generate build journal (skips menu)
   --style <name>       Content style variant (e.g. narrative, shitpost)
@@ -309,10 +358,10 @@ ${bold("EXAMPLES")}
   ${dim("# Extraction only, no AI")}
   buildarc --no-ai
 
-  ${dim("# Generate tweet thread directly (no menu)")}
+  ${dim("# Generate X thread directly (no menu)")}
   buildarc --tweet
 
-  ${dim("# Shitpost-style tweet (absurdist daylog)")}
+  ${dim("# Shitpost-style X thread (absurdist daylog)")}
   buildarc --tweet --style shitpost
 
   ${dim("# Generate all content in one shot")}
@@ -379,7 +428,7 @@ function extractionIsFresh(outputFile: string, projectPath: string): boolean {
 // ── Content generation ──────────────────────────────────────────────
 
 const CONTENT_LABELS: Record<string, string> = {
-  tweet: "tweet thread",
+  tweet: "X thread",
   linkedin: "LinkedIn post",
   journal: "build journal",
 };
@@ -391,13 +440,35 @@ const CONTENT_NUDGES: Record<string, string> = {
 };
 
 const FILE_COMMENTS: Record<string, string> = {
-  tweet: "buildarc tweet thread — copy below, paste into X",
+  tweet: "buildarc X thread — copy below, paste into X",
   linkedin: "buildarc LinkedIn post — copy below, paste into LinkedIn",
   journal: "buildarc build journal — publish as-is or edit to taste",
 };
 
 const PREVIEW_LINES = 6;
-const PREVIEW_MAX_WIDTH = 72;
+const BOX_INNER_WIDTH = 65;
+
+// ── Spinner ────────────────────────────────────────────────────────
+
+const SPINNER_FRAMES = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
+
+function startSpinner(message: string): () => void {
+  let i = 0;
+  const t0 = Date.now();
+  const interval = setInterval(() => {
+    const frame = SPINNER_FRAMES[i % SPINNER_FRAMES.length];
+    const elapsed = Math.round((Date.now() - t0) / 1000);
+    const left = `  ${cyan(frame)} ${dim(message)}`;
+    const right = elapsed > 0 ? dim(`${elapsed}s`) : "";
+    process.stderr.write(`\r\x1b[K${rightAlign(left, right)}`);
+    i++;
+  }, 80);
+
+  return () => {
+    clearInterval(interval);
+    process.stderr.write("\r\x1b[K");
+  };
+}
 
 function withFileComment(content: string, fmt: string): string {
   const comment = FILE_COMMENTS[fmt];
@@ -407,16 +478,26 @@ function withFileComment(content: string, fmt: string): string {
 
 function showPreview(content: string): void {
   const lines = content.trimStart().split("\n").slice(0, PREVIEW_LINES);
-  log("");
+  const displayLines: string[] = [];
+
   for (const line of lines) {
-    const display =
-      line.length > PREVIEW_MAX_WIDTH ? `${line.slice(0, PREVIEW_MAX_WIDTH - 1)}\u2026` : line;
-    log(`  ${dim("\u2502")} ${display}`);
+    displayLines.push(
+      line.length > BOX_INNER_WIDTH ? `${line.slice(0, BOX_INNER_WIDTH - 1)}\u2026` : line,
+    );
   }
+
   const totalLines = content.trimStart().split("\n").length;
   if (totalLines > PREVIEW_LINES) {
-    log(`  ${dim("\u2502")} ${dim("\u2026")}`);
+    displayLines.push("\u2026");
   }
+
+  log("");
+  log(`  ${dim(`\u250c${"\u2500".repeat(BOX_INNER_WIDTH + 2)}\u2510`)}`);
+  for (const line of displayLines) {
+    const pad = " ".repeat(Math.max(0, BOX_INNER_WIDTH - line.length));
+    log(`  ${dim("\u2502")} ${line}${pad} ${dim("\u2502")}`);
+  }
+  log(`  ${dim(`\u2514${"\u2500".repeat(BOX_INNER_WIDTH + 2)}\u2518`)}`);
 }
 
 function fallbackContent(fmt: string, reason: "no-claude" | "error", errorMsg?: string): string {
@@ -476,37 +557,67 @@ async function runContentGeneration(
     return;
   }
 
+  const generated: ContentFormat[] = [];
+
   for (const fmt of formats) {
+    const label = CONTENT_LABELS[fmt];
+    let stopSpinner: (() => void) | null = null;
+    const t0Gen = Date.now();
+
     if (!quiet) {
       log("");
-      log(dim(`  Writing your ${CONTENT_LABELS[fmt]}...`));
+      stopSpinner = startSpinner(`Writing your ${label}...`);
     }
 
     try {
       const effectiveStyle = style ?? "narrative";
       const availableStyles = STYLE_OPTIONS[fmt] ?? ["narrative"];
       if (style && !availableStyles.includes(style)) {
+        stopSpinner?.();
+        stopSpinner = null;
         if (!quiet) {
           log(yellow(`  Style "${style}" not available for ${fmt}, using narrative.`));
+          stopSpinner = startSpinner(`Writing your ${label}...`);
         }
       }
       const resolvedStyle = availableStyles.includes(effectiveStyle) ? effectiveStyle : "narrative";
       const result = await generateContent(extraction, fmt, resolvedStyle);
+      stopSpinner?.();
       const outFile = resolveContentPath(outDir, fmt);
       await writeFile(outFile, `${withFileComment(result, fmt)}\n`, "utf-8");
+      generated.push(fmt);
       if (!quiet) {
+        const genElapsed = ((Date.now() - t0Gen) / 1000).toFixed(1);
+        log(rightAlign(`  ${green("\u2713")} ${bold(label)}`, dim(`${genElapsed}s`)));
         showPreview(result);
-        log("");
-        log(`  ${green(CONTENT_LABELS[fmt])} → ${outFile} — ${CONTENT_NUDGES[fmt]}`);
+        log(`  ${dim("\u2192")} ${outFile} \u2014 ${CONTENT_NUDGES[fmt]}`);
       }
     } catch (err) {
+      stopSpinner?.();
       const msg = err instanceof Error ? err.message : String(err);
-      log(red(`  Couldn't write your ${CONTENT_LABELS[fmt]}: ${msg}`));
+      if (!quiet) {
+        const genElapsed = ((Date.now() - t0Gen) / 1000).toFixed(1);
+        log(rightAlign(`  ${red("\u2717")} ${bold(label)}  ${dim(msg)}`, dim(`${genElapsed}s`)));
+      }
       const outFile = resolveContentPath(outDir, fmt);
       await writeFile(outFile, fallbackContent(fmt, "error", msg), "utf-8");
       if (!quiet) {
-        log(dim(`  Details in ${outFile}`));
+        log(dim(`  ${outFile}`));
       }
+    }
+  }
+
+  // Multi-format summary
+  if (generated.length >= 2 && !quiet) {
+    log("");
+    log(`  ${rule()}`);
+    log("");
+    log(`  Done. ${bold(String(generated.length))} files in ${dim(`${outDir}/`)}`);
+    log("");
+    for (const fmt of generated) {
+      const filename = CONTENT_FILENAMES[fmt];
+      const nudge = CONTENT_NUDGES[fmt];
+      log(`    ${filename.padEnd(15)}${dim(nudge)}`);
     }
   }
 
@@ -572,6 +683,7 @@ async function main() {
   if (!opts.quiet) {
     log("");
     log(`  ${bold("buildarc")} ${dim(`v${VERSION}`)}`);
+    log(`  ${rule()}`);
     log("");
   }
 
@@ -594,8 +706,10 @@ async function main() {
     // Full parse → extract → write cycle
     if (!opts.quiet) {
       log(dim("  Reading your Claude Code sessions..."));
+      log("");
     }
 
+    const t0 = Date.now();
     const parseResult = await parseProject(projectPath);
     let sessions = parseResult.sessions;
 
@@ -637,9 +751,9 @@ async function main() {
 
     if (!opts.quiet) {
       const { stats } = buildLog;
-      log(
-        `  Found ${bold(String(stats.totalSessions))} sessions | ${bold(String(stats.totalMoments))} moments | ${green(String(stats.decisions))} decisions, ${yellow(String(stats.pivots))} pivots`,
-      );
+      const elapsed = ((Date.now() - t0) / 1000).toFixed(1);
+      const statsLine = `  ${bold(String(stats.totalSessions))} sessions  ${bold(String(stats.totalMoments))} moments  ${green(String(stats.decisions))} decisions  ${yellow(String(stats.pivots))} pivots`;
+      log(rightAlign(statsLine, dim(`${elapsed}s`)));
     }
 
     const content = isJson ? formatJson(buildLog) : formatMarkdown(buildLog);
@@ -647,7 +761,7 @@ async function main() {
     await writeFile(extractionFile, content, "utf-8");
 
     if (!opts.quiet) {
-      log(`  Build summary saved to ${green(extractionFile)}`);
+      log(`  Saved to ${dim(extractionFile)}`);
     }
 
     // For AI content, always use markdown extraction
@@ -675,6 +789,11 @@ async function main() {
       );
     }
     return;
+  }
+
+  if (!opts.quiet) {
+    log("");
+    log(`  ${rule()}`);
   }
 
   const choice = await showMenu();
