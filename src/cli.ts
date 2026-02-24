@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import { execSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { readFile, writeFile } from "node:fs/promises";
 import { homedir } from "node:os";
@@ -9,7 +10,7 @@ import { formatJson, formatMarkdown } from "./formatter.js";
 import { parseProject } from "./parser.js";
 import { STYLE_OPTIONS } from "./prompts.js";
 import { generateContent, isClaudeAvailable } from "./storyteller.js";
-import type { CliOptions, ContentFormat, OutputFormat } from "./types.js";
+import type { CliOptions, ContentFormat, OutputFormat, ProjectContext } from "./types.js";
 
 // ── Version ─────────────────────────────────────────────────────────
 
@@ -189,6 +190,68 @@ function autoDetectProject(): string | null {
   }
 }
 
+// ── Project context gathering ────────────────────────────────────────
+
+function normalizeRepoUrl(raw: string): string {
+  let url = raw.trim();
+  // Strip git+ prefix
+  url = url.replace(/^git\+/, "");
+  // Strip trailing .git
+  url = url.replace(/\.git$/, "");
+  // Convert SSH to HTTPS: git@github.com:user/repo → https://github.com/user/repo
+  url = url.replace(/^git@([^:]+):(.+)$/, "https://$1/$2");
+  return url;
+}
+
+function gatherProjectContext(): ProjectContext {
+  const ctx: ProjectContext = {
+    name: null,
+    description: null,
+    repoUrl: null,
+    homepageUrl: null,
+    installCommand: null,
+  };
+
+  // Try package.json in cwd
+  const pkgPath = join(process.cwd(), "package.json");
+  try {
+    const pkg = JSON.parse(readFileSync(pkgPath, "utf-8"));
+    if (typeof pkg.name === "string") ctx.name = pkg.name;
+    if (typeof pkg.description === "string") ctx.description = pkg.description;
+    if (typeof pkg.homepage === "string") ctx.homepageUrl = pkg.homepage;
+
+    // Repository field — string or { url: string }
+    if (typeof pkg.repository === "string") {
+      ctx.repoUrl = normalizeRepoUrl(pkg.repository);
+    } else if (pkg.repository?.url) {
+      ctx.repoUrl = normalizeRepoUrl(pkg.repository.url);
+    }
+
+    // Derive install command from bin field
+    if (pkg.bin && ctx.name) {
+      ctx.installCommand = `npx ${ctx.name}`;
+    }
+  } catch {
+    // No package.json or invalid — that's fine
+  }
+
+  // Fallback: git remote for repo URL
+  if (!ctx.repoUrl) {
+    try {
+      const remote = execSync("git remote get-url origin", {
+        encoding: "utf-8",
+        timeout: 3000,
+        stdio: ["pipe", "pipe", "pipe"],
+      }).trim();
+      if (remote) ctx.repoUrl = normalizeRepoUrl(remote);
+    } catch {
+      // Not a git repo or no remote — that's fine
+    }
+  }
+
+  return ctx;
+}
+
 // ── Arrow-key menu ─────────────────────────────────────────────────
 
 interface MenuItem {
@@ -290,7 +353,8 @@ async function showMenu(): Promise<string | null> {
 // ── Style sub-menu ──────────────────────────────────────────────────
 
 const STYLE_LABELS: Record<string, string> = {
-  narrative: "Narrative (build story thread)",
+  thread: "Thread (build story, 3-5 tweets)",
+  narrative: "Narrative (single literary post)",
   shitpost: "Shitpost (absurdist daylog)",
 };
 
@@ -339,7 +403,7 @@ ${bold("OPTIONS")}
   --tweet              Generate X thread (skips menu)
   --linkedin           Generate LinkedIn post (skips menu)
   --journal            Generate build journal (skips menu)
-  --style <name>       Content style variant (e.g. narrative, shitpost)
+  --style <name>       Content style variant (e.g. thread, narrative, shitpost)
   -q, --quiet          Minimal output
   -h, --help           Show this help
   -v, --version        Show version
@@ -588,12 +652,13 @@ function fallbackContent(fmt: string, reason: "no-claude" | "error", errorMsg?: 
 }
 
 function resolveStyle(fmt: string, style: string | null, quiet: boolean): string {
-  const effectiveStyle = style ?? "narrative";
+  const defaultStyle = fmt === "tweet" ? "thread" : "narrative";
+  const effectiveStyle = style ?? defaultStyle;
   const availableStyles = STYLE_OPTIONS[fmt] ?? ["narrative"];
   if (style && !availableStyles.includes(style) && !quiet) {
-    log(yellow(`  Style "${style}" not available for ${fmt}, using narrative.`));
+    log(yellow(`  Style "${style}" not available for ${fmt}, using ${defaultStyle}.`));
   }
-  return availableStyles.includes(effectiveStyle) ? effectiveStyle : "narrative";
+  return availableStyles.includes(effectiveStyle) ? effectiveStyle : defaultStyle;
 }
 
 interface GenerationResult {
@@ -610,6 +675,7 @@ async function generateSingle(
   outDir: string,
   quiet: boolean,
   style: string | null,
+  projectContext?: ProjectContext,
 ): Promise<GenerationResult> {
   const label = CONTENT_LABELS[fmt];
   let stopSpinner: (() => void) | null = null;
@@ -622,7 +688,7 @@ async function generateSingle(
 
   try {
     const resolvedStyle = resolveStyle(fmt, style, quiet);
-    const result = await generateContent(extraction, fmt, resolvedStyle);
+    const result = await generateContent(extraction, fmt, resolvedStyle, projectContext);
     stopSpinner?.();
     const outFile = resolveContentPath(outDir, fmt);
     await writeFile(outFile, `${withFileComment(result, fmt)}\n`, "utf-8");
@@ -657,6 +723,7 @@ async function generateParallel(
   outDir: string,
   quiet: boolean,
   style: string | null,
+  projectContext?: ProjectContext,
 ): Promise<GenerationResult[]> {
   // Warn about unavailable styles upfront
   for (const fmt of formats) {
@@ -675,7 +742,7 @@ async function generateParallel(
     const t0Gen = Date.now();
     try {
       const resolvedStyle = resolveStyle(fmt, style, true); // quiet — spinner is unified
-      const result = await generateContent(extraction, fmt, resolvedStyle);
+      const result = await generateContent(extraction, fmt, resolvedStyle, projectContext);
       const outFile = resolveContentPath(outDir, fmt);
       await writeFile(outFile, `${withFileComment(result, fmt)}\n`, "utf-8");
       return { fmt, ok: true, content: result, elapsed: (Date.now() - t0Gen) / 1000 };
@@ -747,6 +814,7 @@ async function runContentGeneration(
   outDir: string,
   quiet: boolean,
   style: string | null,
+  projectContext?: ProjectContext,
 ): Promise<void> {
   const claudeOk = await isClaudeAvailable();
   if (!claudeOk) {
@@ -769,9 +837,9 @@ async function runContentGeneration(
   }
 
   if (formats.length === 1) {
-    await generateSingle(formats[0], extraction, outDir, quiet, style);
+    await generateSingle(formats[0], extraction, outDir, quiet, style, projectContext);
   } else {
-    await generateParallel(formats, extraction, outDir, quiet, style);
+    await generateParallel(formats, extraction, outDir, quiet, style, projectContext);
   }
 
   log("");
@@ -923,9 +991,18 @@ async function main() {
   if (opts.noAi) return;
   if (isJson && opts.contentFormats.length === 0) return;
 
+  const projectContext = gatherProjectContext();
+
   // Direct content flags — skip the menu
   if (opts.contentFormats.length > 0) {
-    await runContentGeneration(opts.contentFormats, extraction, outDir, opts.quiet, opts.style);
+    await runContentGeneration(
+      opts.contentFormats,
+      extraction,
+      outDir,
+      opts.quiet,
+      opts.style,
+      projectContext,
+    );
     return;
   }
 
@@ -965,7 +1042,7 @@ async function main() {
     if (picked) style = picked;
   }
 
-  await runContentGeneration(formats, extraction, outDir, opts.quiet, style);
+  await runContentGeneration(formats, extraction, outDir, opts.quiet, style, projectContext);
 }
 
 main().catch((err) => {

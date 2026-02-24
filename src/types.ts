@@ -133,3 +133,11 @@ export interface CliOptions {
   help: boolean;
   version: boolean;
 }
+
+export interface ProjectContext {
+  name: string | null;
+  description: string | null;
+  repoUrl: string | null;
+  homepageUrl: string | null;
+  installCommand: string | null;
+}

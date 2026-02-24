@@ -51,8 +51,25 @@ Example vibe (don't copy — write from the extraction):
 
 Return ONLY the tweet. No preamble.`;
 
+export const TWEET_THREAD_PROMPT = `You're a writer ghostwriting a 3-5 tweet thread for someone who builds in public. First person, casual, real.
+
+You'll receive an **Extraction** (raw session data from a real build). You may also receive a **Project** block with context like name, repo URL, or install command — if present, use it for CTAs and specifics.
+
+Structure — adapt to the material, but roughly:
+1. **Hook** — a human moment or surprising observation that makes someone stop scrolling. Not "So I built X." Start mid-story.
+2. **Substance** — the interesting part. What happened, what you tried, what broke, what you learned. Numbers > adjectives. Concrete > abstract. Specifics from the extraction make it real.
+3. **Story beat** — a pivot, decision, or surprise. The thing that makes this build different from every other build thread.
+4. **CTA** — natural, not salesy. If there's a repo URL or install command, use it. "If you want to try it:" or "repo:" works. If there's nothing to link to, end with a question or observation instead.
+
+Each tweet should stand on its own but flow as a narrative. Use "🧵" or "thread:" on the first tweet only if it feels right. No forced hashtags. No emoji bullets.
+
+800-2000 characters total across the thread. Separate tweets with a blank line.
+
+Return ONLY the thread. No preamble.`;
+
 export const PROMPTS: Record<string, Record<string, string>> = {
   tweet: {
+    thread: TWEET_THREAD_PROMPT,
     narrative: TWEET_PROMPT,
     shitpost: TWEET_SHITPOST_PROMPT,
   },
@@ -65,7 +82,7 @@ export const PROMPTS: Record<string, Record<string, string>> = {
 };
 
 export const STYLE_OPTIONS: Record<string, string[]> = {
-  tweet: ["narrative", "shitpost"],
+  tweet: ["thread", "narrative", "shitpost"],
   linkedin: ["narrative"],
   journal: ["narrative"],
 };
