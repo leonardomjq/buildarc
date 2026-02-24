@@ -389,6 +389,21 @@ function resolveContentPath(outputDir: string, format: string): string {
   return join(outputDir, CONTENT_FILENAMES[format]);
 }
 
+// ── Header ──────────────────────────────────────────────────────────
+
+function showHeader(): void {
+  const art = ["██▄ █ █ █ █   ██▄  ▄▀▄ █▀▄ ▄▀▀", "█▀█ ▀▄█ █ █▄▄ █▀▄ █▀█ █▀▄ ▀▄▄"];
+  const versionTag = `v${VERSION}`;
+
+  log("");
+  log(`  ${bold(cyan(art[0]))}`);
+  log(`  ${bold(cyan(art[1]))}  ${dim(versionTag)}`);
+  log("");
+  log(`  ${dim("Your build story, recovered.")}`);
+  log(`  ${rule()}`);
+  log("");
+}
+
 // ── Graceful shutdown ───────────────────────────────────────────────
 
 function setupSignalHandlers() {
@@ -452,13 +467,60 @@ const BOX_INNER_WIDTH = 65;
 
 const SPINNER_FRAMES = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
 
-function startSpinner(message: string): () => void {
+const MESSAGE_INTERVAL_MS = 4000;
+
+const SPINNER_MESSAGES: Record<string, string[]> = {
+  tweet: [
+    "Reading your moments...",
+    "Finding the story...",
+    "Crafting your thread...",
+    "Finding the hook...",
+    "Compressing weeks into tweets...",
+    "Claude is thinking...",
+    "Good writing takes a minute...",
+    "Almost there...",
+  ],
+  linkedin: [
+    "Reading your moments...",
+    "Finding the story...",
+    "Structuring your insights...",
+    "Writing for the feed...",
+    "Polishing the narrative...",
+    "Claude is thinking...",
+    "Good writing takes a minute...",
+    "Almost there...",
+  ],
+  journal: [
+    "Reading your moments...",
+    "Finding the story...",
+    "Weaving the narrative...",
+    "Recovering the journey...",
+    "Connecting the threads...",
+    "Claude is thinking...",
+    "Good writing takes a minute...",
+    "Almost there...",
+  ],
+  parallel: [
+    "Writing all three at once...",
+    "Thread, post, and journal in flight...",
+    "Claude is multitasking...",
+    "Good writing takes a minute...",
+    "Almost there...",
+  ],
+};
+
+function startSpinner(messages: string | string[]): () => void {
+  const msgList = typeof messages === "string" ? [messages] : messages;
   let i = 0;
   const t0 = Date.now();
   const interval = setInterval(() => {
     const frame = SPINNER_FRAMES[i % SPINNER_FRAMES.length];
     const elapsed = Math.round((Date.now() - t0) / 1000);
-    const left = `  ${cyan(frame)} ${dim(message)}`;
+    const msgIndex = Math.min(
+      Math.floor((Date.now() - t0) / MESSAGE_INTERVAL_MS),
+      msgList.length - 1,
+    );
+    const left = `  ${cyan(frame)} ${dim(msgList[msgIndex])}`;
     const right = elapsed > 0 ? dim(`${elapsed}s`) : "";
     process.stderr.write(`\r\x1b[K${rightAlign(left, right)}`);
     i++;
@@ -530,6 +592,160 @@ function fallbackContent(fmt: string, reason: "no-claude" | "error", errorMsg?: 
   ].join("\n");
 }
 
+function resolveStyle(fmt: string, style: string | null, quiet: boolean): string {
+  const effectiveStyle = style ?? "narrative";
+  const availableStyles = STYLE_OPTIONS[fmt] ?? ["narrative"];
+  if (style && !availableStyles.includes(style) && !quiet) {
+    log(yellow(`  Style "${style}" not available for ${fmt}, using narrative.`));
+  }
+  return availableStyles.includes(effectiveStyle) ? effectiveStyle : "narrative";
+}
+
+interface GenerationResult {
+  fmt: ContentFormat;
+  ok: boolean;
+  content?: string;
+  error?: string;
+  elapsed: number;
+}
+
+async function generateSingle(
+  fmt: ContentFormat,
+  extraction: string,
+  outDir: string,
+  quiet: boolean,
+  style: string | null,
+): Promise<GenerationResult> {
+  const label = CONTENT_LABELS[fmt];
+  let stopSpinner: (() => void) | null = null;
+  const t0Gen = Date.now();
+
+  if (!quiet) {
+    log("");
+    stopSpinner = startSpinner(SPINNER_MESSAGES[fmt] ?? [`Writing your ${label}...`]);
+  }
+
+  try {
+    const resolvedStyle = resolveStyle(fmt, style, quiet);
+    const result = await generateContent(extraction, fmt, resolvedStyle);
+    stopSpinner?.();
+    const outFile = resolveContentPath(outDir, fmt);
+    await writeFile(outFile, `${withFileComment(result, fmt)}\n`, "utf-8");
+    const elapsed = (Date.now() - t0Gen) / 1000;
+    if (!quiet) {
+      log(rightAlign(`  ${green("\u2713")} ${bold(label)}`, dim(`${elapsed.toFixed(1)}s`)));
+      showPreview(result);
+      log(`  ${dim("\u2192")} ${outFile} \u2014 ${CONTENT_NUDGES[fmt]}`);
+    }
+    return { fmt, ok: true, content: result, elapsed };
+  } catch (err) {
+    stopSpinner?.();
+    const msg = err instanceof Error ? err.message : String(err);
+    const elapsed = (Date.now() - t0Gen) / 1000;
+    if (!quiet) {
+      log(
+        rightAlign(`  ${red("\u2717")} ${bold(label)}  ${dim(msg)}`, dim(`${elapsed.toFixed(1)}s`)),
+      );
+    }
+    const outFile = resolveContentPath(outDir, fmt);
+    await writeFile(outFile, fallbackContent(fmt, "error", msg), "utf-8");
+    if (!quiet) {
+      log(dim(`  ${outFile}`));
+    }
+    return { fmt, ok: false, error: msg, elapsed };
+  }
+}
+
+async function generateParallel(
+  formats: readonly ContentFormat[],
+  extraction: string,
+  outDir: string,
+  quiet: boolean,
+  style: string | null,
+): Promise<GenerationResult[]> {
+  // Warn about unavailable styles upfront
+  for (const fmt of formats) {
+    resolveStyle(fmt, style, quiet);
+  }
+
+  const t0 = Date.now();
+  let stopSpinner: (() => void) | null = null;
+
+  if (!quiet) {
+    log("");
+    stopSpinner = startSpinner(SPINNER_MESSAGES.parallel);
+  }
+
+  const promises = formats.map(async (fmt): Promise<GenerationResult> => {
+    const t0Gen = Date.now();
+    try {
+      const resolvedStyle = resolveStyle(fmt, style, true); // quiet — spinner is unified
+      const result = await generateContent(extraction, fmt, resolvedStyle);
+      const outFile = resolveContentPath(outDir, fmt);
+      await writeFile(outFile, `${withFileComment(result, fmt)}\n`, "utf-8");
+      return { fmt, ok: true, content: result, elapsed: (Date.now() - t0Gen) / 1000 };
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      const outFile = resolveContentPath(outDir, fmt);
+      await writeFile(outFile, fallbackContent(fmt, "error", msg), "utf-8");
+      return { fmt, ok: false, error: msg, elapsed: (Date.now() - t0Gen) / 1000 };
+    }
+  });
+
+  const results = await Promise.allSettled(promises);
+  stopSpinner?.();
+
+  const totalElapsed = (Date.now() - t0) / 1000;
+  const resolved: GenerationResult[] = results.map((r) =>
+    r.status === "fulfilled"
+      ? r.value
+      : { fmt: "tweet" as ContentFormat, ok: false, error: "unexpected failure", elapsed: 0 },
+  );
+
+  if (!quiet) {
+    // Print results in original format order
+    for (const res of resolved) {
+      const label = CONTENT_LABELS[res.fmt];
+      if (res.ok) {
+        log(rightAlign(`  ${green("\u2713")} ${bold(label)}`, dim(`${res.elapsed.toFixed(1)}s`)));
+        if (res.content) showPreview(res.content);
+        const outFile = resolveContentPath(outDir, res.fmt);
+        log(`  ${dim("\u2192")} ${outFile} \u2014 ${CONTENT_NUDGES[res.fmt]}`);
+      } else {
+        log(
+          rightAlign(
+            `  ${red("\u2717")} ${bold(label)}  ${dim(res.error ?? "unknown")}`,
+            dim(`${res.elapsed.toFixed(1)}s`),
+          ),
+        );
+        const outFile = resolveContentPath(outDir, res.fmt);
+        log(dim(`  ${outFile}`));
+      }
+    }
+
+    const succeeded = resolved.filter((r) => r.ok);
+    if (succeeded.length >= 2) {
+      log("");
+      log(`  ${rule()}`);
+      log("");
+      log(
+        rightAlign(
+          `  Done. ${bold(String(succeeded.length))} files in ${dim(`${outDir}/`)}`,
+          dim(`${totalElapsed.toFixed(1)}s total`),
+        ),
+      );
+      log("");
+      for (const res of succeeded) {
+        const filename = CONTENT_FILENAMES[res.fmt];
+        const nudge = CONTENT_NUDGES[res.fmt];
+        log(`    ${filename.padEnd(15)}${dim(nudge)}`);
+      }
+    }
+  }
+
+  return resolved;
+}
+
 async function runContentGeneration(
   formats: readonly ContentFormat[],
   extraction: string,
@@ -557,68 +773,10 @@ async function runContentGeneration(
     return;
   }
 
-  const generated: ContentFormat[] = [];
-
-  for (const fmt of formats) {
-    const label = CONTENT_LABELS[fmt];
-    let stopSpinner: (() => void) | null = null;
-    const t0Gen = Date.now();
-
-    if (!quiet) {
-      log("");
-      stopSpinner = startSpinner(`Writing your ${label}...`);
-    }
-
-    try {
-      const effectiveStyle = style ?? "narrative";
-      const availableStyles = STYLE_OPTIONS[fmt] ?? ["narrative"];
-      if (style && !availableStyles.includes(style)) {
-        stopSpinner?.();
-        stopSpinner = null;
-        if (!quiet) {
-          log(yellow(`  Style "${style}" not available for ${fmt}, using narrative.`));
-          stopSpinner = startSpinner(`Writing your ${label}...`);
-        }
-      }
-      const resolvedStyle = availableStyles.includes(effectiveStyle) ? effectiveStyle : "narrative";
-      const result = await generateContent(extraction, fmt, resolvedStyle);
-      stopSpinner?.();
-      const outFile = resolveContentPath(outDir, fmt);
-      await writeFile(outFile, `${withFileComment(result, fmt)}\n`, "utf-8");
-      generated.push(fmt);
-      if (!quiet) {
-        const genElapsed = ((Date.now() - t0Gen) / 1000).toFixed(1);
-        log(rightAlign(`  ${green("\u2713")} ${bold(label)}`, dim(`${genElapsed}s`)));
-        showPreview(result);
-        log(`  ${dim("\u2192")} ${outFile} \u2014 ${CONTENT_NUDGES[fmt]}`);
-      }
-    } catch (err) {
-      stopSpinner?.();
-      const msg = err instanceof Error ? err.message : String(err);
-      if (!quiet) {
-        const genElapsed = ((Date.now() - t0Gen) / 1000).toFixed(1);
-        log(rightAlign(`  ${red("\u2717")} ${bold(label)}  ${dim(msg)}`, dim(`${genElapsed}s`)));
-      }
-      const outFile = resolveContentPath(outDir, fmt);
-      await writeFile(outFile, fallbackContent(fmt, "error", msg), "utf-8");
-      if (!quiet) {
-        log(dim(`  ${outFile}`));
-      }
-    }
-  }
-
-  // Multi-format summary
-  if (generated.length >= 2 && !quiet) {
-    log("");
-    log(`  ${rule()}`);
-    log("");
-    log(`  Done. ${bold(String(generated.length))} files in ${dim(`${outDir}/`)}`);
-    log("");
-    for (const fmt of generated) {
-      const filename = CONTENT_FILENAMES[fmt];
-      const nudge = CONTENT_NUDGES[fmt];
-      log(`    ${filename.padEnd(15)}${dim(nudge)}`);
-    }
+  if (formats.length === 1) {
+    await generateSingle(formats[0], extraction, outDir, quiet, style);
+  } else {
+    await generateParallel(formats, extraction, outDir, quiet, style);
   }
 
   log("");
@@ -681,10 +839,7 @@ async function main() {
   const extractionFile = join(outDir, isJson ? "buildarc.json" : "BUILDARC.md");
 
   if (!opts.quiet) {
-    log("");
-    log(`  ${bold("buildarc")} ${dim(`v${VERSION}`)}`);
-    log(`  ${rule()}`);
-    log("");
+    showHeader();
   }
 
   // ── Check if we can reuse a fresh extraction ──────────────────────
