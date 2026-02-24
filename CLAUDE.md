@@ -109,6 +109,3 @@ Dark theme is always on (`class="dark"` on `<html>`). Design tokens defined via 
 
 See `DESIGN_SYSTEM.md` for full reference: color palette, 4-font typography hierarchy, motion presets, section patterns, textures, glass morphism.
 
-## Full specs
-
-See `BUILDLOG-HANDOFF.md` for complete product specs: CLI arguments, transcript format, extraction strategy, output format examples, landing page plan, and launch plan.

@@ -11,7 +11,7 @@
 
 Your build story, recovered.
 
-buildarc reads your [Claude Code](https://claude.ai/code) conversation transcripts and turns them into shareable content — tweet threads, LinkedIn posts, build journals. One command, zero config.
+buildarc reads your [Claude Code](https://claude.ai/code) conversation transcripts and turns them into shareable content — X threads, LinkedIn posts, build journals. One command, zero config.
 
 ```bash
 npx buildarc
@@ -24,27 +24,28 @@ npx buildarc
 
 ---
 
-## From 47 Claude Code sessions to a tweet thread
+## From 47 Claude Code sessions to an X thread
 
 ```
-I mass-deleted the landing page three times before I realized the
-problem wasn't the design.
+45 Claude Code sessions into one tool and I mass-deleted the
+landing page three times before I realized the problem wasn't
+the design — it was the pitch.
 
-It was the pitch. I'd been describing features nobody asked about
-to an audience I hadn't defined. Forty sessions of building a tool
-and I still couldn't say what it did in one sentence.
-
-So I closed the editor and opened the transcripts. Read through
-weeks of conversations — the pivots, the dead ends, the moment
-I scrapped the database and started over with flat files.
+I'd been describing features nobody asked about to an audience
+I hadn't defined. So I closed the editor and read my own
+transcripts. The pivots, the dead ends, the moment I scrapped
+the database and started over with flat files.
 
 The story was right there. I just hadn't been reading it.
+Shipped the landing page in one session after that.
 
-Shipped the landing page in one session after that. Turns out
-the copy writes itself when you know what actually happened.
+That realization became buildarc — one command to recover
+your build story from Claude Code sessions.
+
+npx buildarc
 ```
 
-That's real output. One command, from raw transcripts to ready-to-post content.
+That's real output. One command, from raw transcripts to a ready-to-post thread with a CTA.
 
 ---
 
@@ -52,15 +53,16 @@ That's real output. One command, from raw transcripts to ready-to-post content.
 
 1. Build something with Claude Code (you probably already have)
 2. Run `npx buildarc` in your project directory
-3. Pick your format — tweet, LinkedIn, journal, or all three
+3. Pick your format — X thread, LinkedIn, journal, or all three
 
 ---
 
 ## Features
 
 - **One command** — `npx buildarc`, auto-detects your project, no config
-- **Three formats** — Tweet threads, LinkedIn posts, build journals
+- **Three formats** — X threads, LinkedIn posts, build journals (with style variants)
 - **Two layers** — Instant extraction + AI storytelling via your `claude` CLI
+- **Project-aware** — Reads your `package.json` and git remote for CTAs and specifics
 - **Zero dependencies** — Pure Node.js built-ins, installs in seconds
 - **Privacy-first** — Everything runs locally, no data transmitted, no telemetry
 - **Secret scrubbing** — API keys, tokens, and connection strings redacted automatically
@@ -92,7 +94,7 @@ That's real output. One command, from raw transcripts to ready-to-post content.
 
   What do you want to share?
 
-    1. Tweet thread
+    1. X thread
     2. LinkedIn post
     3. Build journal
     4. All of the above
@@ -164,10 +166,13 @@ npm install -g buildarc
 # Auto-detect project from current directory
 buildarc
 
-# Generate a tweet thread (skip the menu)
+# Generate an X thread (skip the menu — thread is the default style)
 buildarc --tweet
 
-# Shitpost-style tweet
+# Single literary post instead of a thread
+buildarc --tweet --style narrative
+
+# Shitpost-style X thread (absurdist daylog)
 buildarc --tweet --style shitpost
 
 # Generate everything at once
@@ -192,10 +197,10 @@ buildarc ~/.claude/projects/-Users-you-projects-my-app/
 --sessions <N>       Last N sessions only
 --output, -o <DIR>   Output directory (default: .buildarc/)
 --no-ai              Extraction only, skip content generation
---tweet              Generate X/Twitter thread
+--tweet              Generate X thread
 --linkedin           Generate LinkedIn post
 --journal            Generate build journal
---style <name>       Content style variant (e.g. narrative, shitpost)
+--style <name>       Content style variant (e.g. thread, narrative, shitpost)
 -q, --quiet          Minimal output
 -h, --help           Show help
 -v, --version        Show version
@@ -225,7 +230,7 @@ This README was informed by buildarc's own output. Dogfooding all the way down.
 Everything goes to `.buildarc/` in your project root:
 
 - `BUILDARC.md` — Structured build summary with all moments, grouped by date
-- `tweet.md` — Ready-to-paste tweet thread
+- `tweet.md` — Ready-to-paste X thread
 - `linkedin.md` — Ready-to-paste LinkedIn post
 - `journal.md` — Build journal entry
 
