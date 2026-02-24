@@ -5,10 +5,7 @@
 
 ![CI](https://github.com/leonardomjq/buildarc/actions/workflows/ci.yml/badge.svg)
 [![npm](https://img.shields.io/npm/v/buildarc.svg)](https://npmjs.com/package/buildarc)
-[![npm downloads](https://img.shields.io/npm/dm/buildarc.svg)](https://npmjs.com/package/buildarc)
-![zero dependencies](https://img.shields.io/badge/dependencies-0-brightgreen.svg)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-![node >= 18](https://img.shields.io/badge/node-%3E%3D18-brightgreen.svg)
 
 # buildarc
 
@@ -25,15 +22,9 @@ npx buildarc
   <img src=".github/assets/demo.gif" alt="buildarc demo" width="640">
 </p> -->
 
-> **Alpha (v0.x)** — The core pipeline works. Output quality is being tuned. [Feedback welcome.](https://github.com/leonardomjq/buildarc/issues)
-
 ---
 
-## See what you get
-
-Run `npx buildarc --tweet` on a real project. This is what comes back:
-
-**Generated tweet thread:**
+## From 47 Claude Code sessions to a tweet thread
 
 ```
 I mass-deleted the landing page three times before I realized the
@@ -52,6 +43,77 @@ The story was right there. I just hadn't been reading it.
 Shipped the landing page in one session after that. Turns out
 the copy writes itself when you know what actually happened.
 ```
+
+That's real output. One command, from raw transcripts to ready-to-post content.
+
+---
+
+## Quick start
+
+1. Build something with Claude Code (you probably already have)
+2. Run `npx buildarc` in your project directory
+3. Pick your format — tweet, LinkedIn, journal, or all three
+
+---
+
+## Features
+
+- **One command** — `npx buildarc`, auto-detects your project, no config
+- **Three formats** — Tweet threads, LinkedIn posts, build journals
+- **Two layers** — Instant extraction + AI storytelling via your `claude` CLI
+- **Zero dependencies** — Pure Node.js built-ins, installs in seconds
+- **Privacy-first** — Everything runs locally, no data transmitted, no telemetry
+- **Secret scrubbing** — API keys, tokens, and connection strings redacted automatically
+- **Retroactive** — Works on sessions that already happened
+
+---
+
+## Why buildarc
+
+**vs. doing nothing** — This is the real alternative. You finish building, think "I should post about this," then don't. The activation energy is too high. buildarc makes it one command.
+
+**vs. pasting into ChatGPT** — Works for one session. Try it with 50 sessions and hundreds of megabytes of `.jsonl` files. buildarc processes them all in seconds and outputs content formatted for the platform you're posting to.
+
+**vs. git log** — Commit history shows what changed in code. It doesn't capture why you dropped the database, why you pivoted from a web app to a CLI, or the moment you almost quit. buildarc recovers the "why."
+
+**vs. manual journaling** — You've told yourself you'll keep build notes after every session. How's that going? buildarc works retroactively — it recovers stories from sessions that already happened.
+
+---
+
+## How it works
+
+```
+  buildarc v0.1.0
+
+  Reading your Claude Code sessions...
+  Found 14 sessions | 47 moments | 12 decisions, 3 pivots
+
+  Build summary saved to .buildarc/BUILDARC.md
+
+  What do you want to share?
+
+    1. Tweet thread
+    2. LinkedIn post
+    3. Build journal
+    4. All of the above
+    5. Just the summary
+```
+
+<details>
+<summary><strong>The pipeline under the hood</strong></summary>
+
+Two layers — extraction is instant, storytelling is AI:
+
+1. **Parse** — Streams your `.jsonl` transcript files, filters to the meaningful messages
+2. **Extract** — Classifies key moments: decisions, pivots, emotions, directives, questions
+3. **Scrub** — Redacts API keys, tokens, and secrets before anything becomes shareable
+4. **Format** — Writes a structured build summary (Markdown or JSON)
+5. **Story** — Sends the summary to Claude to write your post in your voice
+6. **Ship** — Saves the content to `.buildarc/` — copy, paste, done
+
+Zero runtime dependencies. Your data stays local. The AI step uses your existing Claude Code installation.
+
+</details>
 
 <details>
 <summary><strong>Generated BUILDARC.md excerpt</strong></summary>
@@ -85,62 +147,6 @@ the copy writes itself when you know what actually happened.
 ```
 
 </details>
-
-The extraction finds the moments. Your Claude turns them into a story.
-
----
-
-## Quick start
-
-1. Build something with Claude Code (you probably already have)
-2. Run `npx buildarc` in your project directory
-3. Pick your format — tweet, LinkedIn, journal, or all three
-
----
-
-## Features
-
-- **One command** — `npx buildarc`, auto-detects your project, no config
-- **Three formats** — Tweet threads, LinkedIn posts, build journals
-- **Two layers** — Instant extraction + AI storytelling via your `claude` CLI
-- **Zero dependencies** — Pure Node.js built-ins, installs in seconds
-- **Privacy-first** — Everything runs locally, no data transmitted, no telemetry
-- **Secret scrubbing** — API keys, tokens, and connection strings redacted automatically
-- **Retroactive** — Works on sessions that already happened
-
----
-
-## How it works
-
-You build things with Claude Code. Those sessions contain decisions, pivots, breakthroughs, and dead ends — a story. buildarc finds that story and helps you share it.
-
-```
-  buildarc v0.1.0
-
-  Reading your Claude Code sessions...
-  Found 14 sessions | 47 moments | 12 decisions, 3 pivots
-
-  Build summary saved to .buildarc/BUILDARC.md
-
-  What do you want to share?
-
-    1. Tweet thread
-    2. LinkedIn post
-    3. Build journal
-    4. All of the above
-    5. Just the summary
-```
-
-Two layers — extraction is instant, storytelling is AI:
-
-1. **Parse** — Streams your `.jsonl` transcript files, filters to the meaningful messages
-2. **Extract** — Classifies key moments: decisions, pivots, emotions, directives, questions
-3. **Scrub** — Redacts API keys, tokens, and secrets before anything becomes shareable
-4. **Format** — Writes a structured build summary (Markdown or JSON)
-5. **Story** — Sends the summary to Claude to write your post in your voice
-6. **Ship** — Saves the content to `.buildarc/` — copy, paste, done
-
-Zero runtime dependencies. Your data stays local. The AI step uses your existing Claude Code installation.
 
 ## Install
 
@@ -177,7 +183,8 @@ buildarc --sessions 5 --format json
 buildarc ~/.claude/projects/-Users-you-projects-my-app/
 ```
 
-## Flags
+<details>
+<summary><strong>All flags</strong></summary>
 
 ```
 --format <md|json>   Output format (default: md)
@@ -196,17 +203,7 @@ buildarc ~/.claude/projects/-Users-you-projects-my-app/
 
 Flags are combinable: `buildarc --tweet --linkedin` generates both without the interactive menu.
 
----
-
-## Why buildarc
-
-**vs. doing nothing** — This is the real alternative. You finish building, think "I should post about this," then don't. The activation energy is too high. buildarc makes it one command.
-
-**vs. pasting into ChatGPT** — Works for one session. Try it with 50 sessions and hundreds of megabytes of `.jsonl` files. buildarc processes them all in seconds and outputs content formatted for the platform you're posting to.
-
-**vs. git log** — Commit history shows what changed in code. It doesn't capture why you dropped the database, why you pivoted from a web app to a CLI, or the moment you almost quit. buildarc recovers the "why."
-
-**vs. manual journaling** — You've told yourself you'll keep build notes after every session. How's that going? buildarc works retroactively — it recovers stories from sessions that already happened.
+</details>
 
 ---
 
@@ -217,21 +214,6 @@ buildarc was born from building ScoutAgent — a SaaS that didn't work out. 45+ 
 This README was informed by buildarc's own output. Dogfooding all the way down.
 
 ---
-
-<details>
-<summary><strong>What gets redacted</strong></summary>
-
-buildarc automatically scrubs secrets from your extracted moments before they reach shareable content:
-
-- API keys (OpenAI, GitHub, AWS, Stripe, Slack)
-- Bearer tokens
-- Connection strings (PostgreSQL, MongoDB, Redis, MySQL, AMQP)
-- Environment variable secrets (`DATABASE_URL=...`, `API_KEY=...`, `JWT_SECRET=...`, etc.)
-- Generic secret assignments (`token=`, `password=`, `credentials=`)
-
-Matches are replaced with `[REDACTED]` — visible, not silent. See [SECURITY.md](SECURITY.md) for the full list and limitations.
-
-</details>
 
 ## Requirements
 
@@ -247,7 +229,20 @@ Everything goes to `.buildarc/` in your project root:
 - `linkedin.md` — Ready-to-paste LinkedIn post
 - `journal.md` — Build journal entry
 
----
+<details>
+<summary><strong>What gets redacted</strong></summary>
+
+buildarc automatically scrubs secrets from your extracted moments before they reach shareable content:
+
+- API keys (OpenAI, GitHub, AWS, Stripe, Slack)
+- Bearer tokens
+- Connection strings (PostgreSQL, MongoDB, Redis, MySQL, AMQP)
+- Environment variable secrets (`DATABASE_URL=...`, `API_KEY=...`, `JWT_SECRET=...`, etc.)
+- Generic secret assignments (`token=`, `password=`, `credentials=`)
+
+Matches are replaced with `[REDACTED]` — visible, not silent. See [SECURITY.md](SECURITY.md) for the full list and limitations.
+
+</details>
 
 ## Contributing
 
