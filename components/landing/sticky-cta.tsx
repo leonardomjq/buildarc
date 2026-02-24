@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Github } from "lucide-react";
 import { Logo } from "@/components/logo";
+import { AnimatePresence, motion } from "framer-motion";
+import { Github } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export function StickyCta() {
   const [visible, setVisible] = useState(false);
@@ -16,7 +16,7 @@ export function StickyCta() {
       ([entry]) => {
         setVisible(!entry.isIntersecting);
       },
-      { threshold: 0 }
+      { threshold: 0 },
     );
 
     observer.observe(hero);

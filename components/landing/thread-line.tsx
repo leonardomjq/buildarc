@@ -1,9 +1,9 @@
 "use client";
 
-import type { ReactNode } from "react";
-import { motion, useInView } from "framer-motion";
-import { useRef } from "react";
 import { threadProgress } from "@/lib/motion";
+import { motion, useInView } from "framer-motion";
+import type { ReactNode } from "react";
+import { useRef } from "react";
 
 interface ThreadLineProps {
   children: ReactNode;

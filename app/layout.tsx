@@ -1,6 +1,6 @@
-import type { Metadata } from "next";
-import { Inter, JetBrains_Mono, Instrument_Serif, Lora } from "next/font/google";
 import { ToastProvider } from "@/components/toast";
+import type { Metadata } from "next";
+import { Instrument_Serif, Inter, JetBrains_Mono, Lora } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({

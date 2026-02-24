@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 
 const sizeClasses = {
   sm: "text-xs",
@@ -15,11 +15,7 @@ interface LogoProps {
 export function Logo({ size = "sm", href, className }: LogoProps) {
   const inner = (
     <span
-      className={cn(
-        "font-mono uppercase tracking-widest text-text",
-        sizeClasses[size],
-        className
-      )}
+      className={cn("font-mono uppercase tracking-widest text-text", sizeClasses[size], className)}
     >
       build<span className="text-text-dim">arc</span>
     </span>

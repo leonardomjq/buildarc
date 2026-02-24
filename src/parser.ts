@@ -1,7 +1,7 @@
 import { createReadStream } from "node:fs";
 import { readdir } from "node:fs/promises";
-import { createInterface } from "node:readline";
 import { join } from "node:path";
+import { createInterface } from "node:readline";
 import type {
   ContentBlock,
   ParsedAssistantMessage,
@@ -25,9 +25,7 @@ function isUserEvent(raw: Record<string, unknown>): boolean {
   );
 }
 
-function isAssistantEvent(
-  raw: Record<string, unknown>,
-): boolean {
+function isAssistantEvent(raw: Record<string, unknown>): boolean {
   return (
     raw.type === "assistant" &&
     raw.message != null &&
@@ -44,9 +42,7 @@ function extractUserMessage(event: RawUserEvent): ParsedUserMessage | null {
   return { role: "user", text, timestamp: event.timestamp };
 }
 
-function extractAssistantMessage(
-  event: RawAssistantEvent,
-): ParsedAssistantMessage | null {
+function extractAssistantMessage(event: RawAssistantEvent): ParsedAssistantMessage | null {
   const blocks = event.message.content as ContentBlock[];
   const textParts: string[] = [];
   const tools: string[] = [];
@@ -73,25 +69,33 @@ function extractAssistantMessage(
   };
 }
 
-export async function parseFile(
-  filePath: string,
-): Promise<ParsedSession | null> {
+export interface ParseFileResult {
+  session: ParsedSession | null;
+  skippedLines: number;
+  totalLines: number;
+}
+
+export async function parseFile(filePath: string): Promise<ParseFileResult> {
   const messages: ParsedMessage[] = [];
   let sessionId = "";
   let slug = "";
   let startedAt = "";
   let endedAt = "";
+  let totalLines = 0;
+  let skippedLines = 0;
 
   const stream = createReadStream(filePath, { encoding: "utf-8" });
-  const rl = createInterface({ input: stream, crlfDelay: Infinity });
+  const rl = createInterface({ input: stream, crlfDelay: Number.POSITIVE_INFINITY });
 
   for await (const line of rl) {
     if (!line.trim()) continue;
+    totalLines++;
 
     let raw: Record<string, unknown>;
     try {
       raw = JSON.parse(line);
     } catch {
+      skippedLines++;
       continue; // malformed JSON, skip
     }
 
@@ -140,20 +144,28 @@ export async function parseFile(
     }
   }
 
-  if (messages.length === 0) return null;
+  const session =
+    messages.length === 0
+      ? null
+      : {
+          sessionId: sessionId || filePath,
+          slug: slug || "unnamed",
+          startedAt,
+          endedAt,
+          messages,
+        };
 
-  return {
-    sessionId: sessionId || filePath,
-    slug: slug || "unnamed",
-    startedAt,
-    endedAt,
-    messages,
-  };
+  return { session, skippedLines, totalLines };
 }
 
-export async function parseProject(
-  dirPath: string,
-): Promise<ParsedSession[]> {
+export interface ParseProjectResult {
+  sessions: ParsedSession[];
+  totalSkipped: number;
+  totalLines: number;
+  filesSkipped: number;
+}
+
+export async function parseProject(dirPath: string): Promise<ParseProjectResult> {
   let entries: string[];
   try {
     entries = await readdir(dirPath);
@@ -161,32 +173,32 @@ export async function parseProject(
     throw new Error(`Cannot read project directory: ${dirPath}`);
   }
 
-  const jsonlFiles = entries
-    .filter((f) => f.endsWith(".jsonl"))
-    .map((f) => join(dirPath, f));
+  const jsonlFiles = entries.filter((f) => f.endsWith(".jsonl")).map((f) => join(dirPath, f));
 
   if (jsonlFiles.length === 0) {
     throw new Error(`No .jsonl transcript files found in: ${dirPath}`);
   }
 
   const sessions: ParsedSession[] = [];
+  let totalSkipped = 0;
+  let totalLines = 0;
+  let filesSkipped = 0;
 
   for (const file of jsonlFiles) {
     try {
-      const session = await parseFile(file);
-      if (session) {
-        sessions.push(session);
+      const result = await parseFile(file);
+      totalSkipped += result.skippedLines;
+      totalLines += result.totalLines;
+      if (result.session) {
+        sessions.push(result.session);
       }
     } catch {
-      // Skip files that can't be parsed
-      continue;
+      filesSkipped++;
     }
   }
 
   // Sort by start time
-  sessions.sort(
-    (a, b) => new Date(a.startedAt).getTime() - new Date(b.startedAt).getTime(),
-  );
+  sessions.sort((a, b) => new Date(a.startedAt).getTime() - new Date(b.startedAt).getTime());
 
-  return sessions;
+  return { sessions, totalSkipped, totalLines, filesSkipped };
 }

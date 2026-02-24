@@ -1,3 +1,4 @@
+import { scrub } from "./scrubber.js";
 import type {
   BuildLog,
   BuildStats,
@@ -80,10 +81,7 @@ export const TYPE_PRIORITY: Record<MomentType, number> = {
   DIRECTIVE: 1,
 };
 
-export function classifyText(
-  text: string,
-  role: "user" | "assistant" = "user",
-): MomentType[] {
+export function classifyText(text: string, role: "user" | "assistant" = "user"): MomentType[] {
   const types: MomentType[] = [];
   for (const { type, re, roles } of PATTERNS) {
     if (roles && !roles.includes(role)) continue;
@@ -106,12 +104,10 @@ function extractMoments(messages: ParsedMessage[]): Moment[] {
 
     const types = classifyText(text, msg.role);
     if (types.length > 0) {
-      const best = types.reduce((a, b) =>
-        TYPE_PRIORITY[a] >= TYPE_PRIORITY[b] ? a : b,
-      );
+      const best = types.reduce((a, b) => (TYPE_PRIORITY[a] >= TYPE_PRIORITY[b] ? a : b));
       const maxLen = msg.role === "user" ? 500 : 200;
-      const excerpt =
-        text.length > maxLen ? text.slice(0, maxLen) + "..." : text;
+      const raw = text.length > maxLen ? `${text.slice(0, maxLen)}...` : text;
+      const { text: excerpt } = scrub(raw);
 
       moments.push({
         type: best,
@@ -142,12 +138,8 @@ export function extractSession(parsed: ParsedSession): Session {
   const moments = extractMoments(parsed.messages);
   const tools = collectTools(parsed.messages);
 
-  const userMessages = parsed.messages.filter(
-    (m) => m.role === "user",
-  ).length;
-  const assistantMessages = parsed.messages.filter(
-    (m) => m.role === "assistant",
-  ).length;
+  const userMessages = parsed.messages.filter((m) => m.role === "user").length;
+  const assistantMessages = parsed.messages.filter((m) => m.role === "assistant").length;
 
   const date = parsed.startedAt
     ? new Date(parsed.startedAt).toISOString().split("T")[0]
@@ -229,10 +221,7 @@ function computeStats(sessions: Session[]): BuildStats {
   };
 }
 
-export function extractBuildLog(
-  parsedSessions: ParsedSession[],
-  projectPath: string,
-): BuildLog {
+export function extractBuildLog(parsedSessions: ParsedSession[], projectPath: string): BuildLog {
   const sessions = parsedSessions.map(extractSession);
   const stats = computeStats(sessions);
 

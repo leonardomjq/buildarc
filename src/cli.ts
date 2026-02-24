@@ -1,15 +1,15 @@
 #!/usr/bin/env node
 
-import { existsSync, mkdirSync, readFileSync, statSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { readFile, writeFile } from "node:fs/promises";
 import { homedir } from "node:os";
 import { join, resolve } from "node:path";
 import { createInterface } from "node:readline";
-import { parseProject } from "./parser.js";
 import { extractBuildLog } from "./extractor.js";
-import { formatMarkdown, formatJson } from "./formatter.js";
-import { isClaudeAvailable, generateContent } from "./storyteller.js";
+import { formatJson, formatMarkdown } from "./formatter.js";
+import { parseProject } from "./parser.js";
 import { STYLE_OPTIONS } from "./prompts.js";
+import { generateContent, isClaudeAvailable } from "./storyteller.js";
 import type { CliOptions, ContentFormat, OutputFormat } from "./types.js";
 
 // ── Version ─────────────────────────────────────────────────────────
@@ -20,10 +20,7 @@ const VERSION = JSON.parse(
 
 // ── ANSI colors (respects NO_COLOR: https://no-color.org/) ──────────
 
-const noColor =
-  "NO_COLOR" in process.env ||
-  process.env.TERM === "dumb" ||
-  !process.stderr.isTTY;
+const noColor = "NO_COLOR" in process.env || process.env.TERM === "dumb" || !process.stderr.isTTY;
 
 const dim = noColor ? (s: string) => s : (s: string) => `\x1b[2m${s}\x1b[22m`;
 const bold = noColor ? (s: string) => s : (s: string) => `\x1b[1m${s}\x1b[22m`;
@@ -35,7 +32,7 @@ const red = noColor ? (s: string) => s : (s: string) => `\x1b[31m${s}\x1b[39m`;
 // ── Logging (stderr so content goes to files cleanly) ───────────────
 
 function log(msg: string) {
-  process.stderr.write(msg + "\n");
+  process.stderr.write(`${msg}\n`);
 }
 
 // ── Arg parsing ─────────────────────────────────────────────────────
@@ -114,7 +111,7 @@ function parseArgs(argv: string[]): CliOptions {
           process.exit(1);
         }
         const dateStr = args[++i];
-        if (isNaN(new Date(dateStr).getTime())) {
+        if (Number.isNaN(new Date(dateStr).getTime())) {
           log(red(`Invalid date: ${dateStr}. Use YYYY-MM-DD format.`));
           process.exit(1);
         }
@@ -126,8 +123,8 @@ function parseArgs(argv: string[]): CliOptions {
           log(red("--sessions requires a number."));
           process.exit(1);
         }
-        const n = parseInt(args[++i], 10);
-        if (isNaN(n) || n <= 0) {
+        const n = Number.parseInt(args[++i], 10);
+        if (Number.isNaN(n) || n <= 0) {
           log(red("--sessions must be a positive number."));
           process.exit(1);
         }
@@ -250,7 +247,7 @@ async function showStyleMenu(format: ContentFormat): Promise<string | null> {
     rl.on("close", () => resolve(null));
     rl.question(`  ${dim(`Choose (1-${styles.length}):`)} `, (answer) => {
       rl.close();
-      const idx = parseInt(answer.trim(), 10) - 1;
+      const idx = Number.parseInt(answer.trim(), 10) - 1;
       if (idx >= 0 && idx < styles.length) {
         resolve(styles[idx]);
       } else {
@@ -359,13 +356,21 @@ function setupSignalHandlers() {
 function extractionIsFresh(outputFile: string, projectPath: string): boolean {
   try {
     if (!existsSync(outputFile)) return false;
-    // Only cache markdown extractions (not JSON — different structure)
     if (!outputFile.endsWith(".md")) return false;
     const outputMtime = statSync(outputFile).mtimeMs;
-    // We can't check jsonl mtimes synchronously in the async flow,
-    // so this is a quick heuristic: if the file exists and is < 5 min old, reuse it
-    const fiveMinAgo = Date.now() - 5 * 60 * 1000;
-    return outputMtime > fiveMinAgo;
+
+    // Compare against the newest .jsonl in the project directory
+    const entries = readdirSync(projectPath);
+    let newestSource = 0;
+    for (const entry of entries) {
+      if (entry.endsWith(".jsonl")) {
+        const mtime = statSync(join(projectPath, entry)).mtimeMs;
+        if (mtime > newestSource) newestSource = mtime;
+      }
+    }
+
+    // Fresh if extraction is newer than the newest source file
+    return newestSource > 0 && outputMtime > newestSource;
   } catch {
     return false;
   }
@@ -404,9 +409,8 @@ function showPreview(content: string): void {
   const lines = content.trimStart().split("\n").slice(0, PREVIEW_LINES);
   log("");
   for (const line of lines) {
-    const display = line.length > PREVIEW_MAX_WIDTH
-      ? line.slice(0, PREVIEW_MAX_WIDTH - 1) + "\u2026"
-      : line;
+    const display =
+      line.length > PREVIEW_MAX_WIDTH ? `${line.slice(0, PREVIEW_MAX_WIDTH - 1)}\u2026` : line;
     log(`  ${dim("\u2502")} ${display}`);
   }
   const totalLines = content.trimStart().split("\n").length;
@@ -421,12 +425,12 @@ function fallbackContent(fmt: string, reason: "no-claude" | "error", errorMsg?: 
 
   if (reason === "no-claude") {
     return [
-      `# Almost there`,
+      "# Almost there",
       "",
-      `buildarc found your build story (check BUILDARC.md), but it needs`,
+      "buildarc found your build story (check BUILDARC.md), but it needs",
       `Claude Code installed to write your ${label}.`,
       "",
-      `1. Install Claude Code: https://claude.ai/code`,
+      "1. Install Claude Code: https://claude.ai/code",
       `2. Come back and run: \`${retryCmd}\``,
       "",
       `It'll pick up where it left off.`,
@@ -486,12 +490,10 @@ async function runContentGeneration(
           log(yellow(`  Style "${style}" not available for ${fmt}, using narrative.`));
         }
       }
-      const resolvedStyle = availableStyles.includes(effectiveStyle)
-        ? effectiveStyle
-        : "narrative";
+      const resolvedStyle = availableStyles.includes(effectiveStyle) ? effectiveStyle : "narrative";
       const result = await generateContent(extraction, fmt, resolvedStyle);
       const outFile = resolveContentPath(outDir, fmt);
-      await writeFile(outFile, withFileComment(result, fmt) + "\n", "utf-8");
+      await writeFile(outFile, `${withFileComment(result, fmt)}\n`, "utf-8");
       if (!quiet) {
         showPreview(result);
         log("");
@@ -526,6 +528,20 @@ async function main() {
   if (opts.help) {
     showHelp();
     return;
+  }
+
+  // ── Flag conflict detection ──────────────────────────────────────
+  if (opts.noAi && opts.contentFormats.length > 0) {
+    const flags = opts.contentFormats.map((f) => `--${f}`).join(", ");
+    log(red(`  --no-ai conflicts with ${flags}`));
+    log(dim("  Content generation requires AI. Remove --no-ai or the content flags."));
+    process.exit(1);
+  }
+
+  if (opts.noAi && opts.style) {
+    log(red("  --no-ai conflicts with --style"));
+    log(dim("  Style variants only apply to AI-generated content."));
+    process.exit(1);
   }
 
   // Resolve project path
@@ -571,22 +587,35 @@ async function main() {
   if (cachedExtraction) {
     // Reuse existing extraction
     if (!opts.quiet) {
-      log(dim(`  Reusing your build summary`));
+      log(dim("  Reusing your build summary"));
     }
     extraction = await readFile(extractionFile, "utf-8");
   } else {
     // Full parse → extract → write cycle
     if (!opts.quiet) {
-      log(dim(`  Reading your Claude Code sessions...`));
+      log(dim("  Reading your Claude Code sessions..."));
     }
 
-    let sessions = await parseProject(projectPath);
+    const parseResult = await parseProject(projectPath);
+    let sessions = parseResult.sessions;
+
+    if (!opts.quiet && parseResult.totalLines > 0) {
+      const skipRate = parseResult.totalSkipped / parseResult.totalLines;
+      if (skipRate > 0.1) {
+        log(
+          yellow(
+            `  Warning: ${parseResult.totalSkipped}/${parseResult.totalLines} lines skipped (${Math.round(skipRate * 100)}% malformed)`,
+          ),
+        );
+      }
+      if (parseResult.filesSkipped > 0) {
+        log(yellow(`  Warning: ${parseResult.filesSkipped} file(s) could not be read`));
+      }
+    }
 
     if (opts.since) {
       const sinceDate = new Date(opts.since);
-      sessions = sessions.filter(
-        (s) => new Date(s.startedAt) >= sinceDate,
-      );
+      sessions = sessions.filter((s) => new Date(s.startedAt) >= sinceDate);
     }
 
     if (opts.sessions) {
@@ -613,9 +642,7 @@ async function main() {
       );
     }
 
-    const content = isJson
-      ? formatJson(buildLog)
-      : formatMarkdown(buildLog);
+    const content = isJson ? formatJson(buildLog) : formatMarkdown(buildLog);
 
     await writeFile(extractionFile, content, "utf-8");
 
@@ -641,7 +668,11 @@ async function main() {
   // Interactive menu
   if (!process.stdin.isTTY) {
     if (!opts.quiet) {
-      log(dim("  Your build summary is in .buildarc/ — run with --tweet or --linkedin to generate posts."));
+      log(
+        dim(
+          "  Your build summary is in .buildarc/ — run with --tweet or --linkedin to generate posts.",
+        ),
+      );
     }
     return;
   }
@@ -656,9 +687,7 @@ async function main() {
   }
 
   const formats: ContentFormat[] =
-    choice === "all"
-      ? ["tweet", "linkedin", "journal"]
-      : [choice as ContentFormat];
+    choice === "all" ? ["tweet", "linkedin", "journal"] : [choice as ContentFormat];
 
   // Show style sub-menu for single-format selections with multiple styles
   let style: string | null = opts.style;

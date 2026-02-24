@@ -27,21 +27,28 @@
   "bin": {
     "buildarc": "./dist/cli.js"
   },
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
     "build:cli": "tsc -p tsconfig.cli.json",
     "start": "next start",
     "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "format": "biome format --write .",
     "prepublishOnly": "tsc -p tsconfig.cli.json",
     "release:patch": "npm version patch && git push && git push --tags && npm publish",
     "release:minor": "npm version minor && git push && git push --tags && npm publish",
     "release:major": "npm version major && git push && git push --tags && npm publish"
   },
   "packageManager": "pnpm@10.28.0",
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "vitest": "^3.0.5"
+  },
   "dependencies": {
     "@tailwindcss/postcss": "^4.2.0",
     "@types/node": "^25.2.3",

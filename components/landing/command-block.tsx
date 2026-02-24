@@ -1,9 +1,9 @@
 "use client";
 
+import { CopyCommand } from "@/components/landing/copy-command";
+import { stampReveal, viewportFadeIn } from "@/lib/motion";
 import { motion } from "framer-motion";
 import { Github } from "lucide-react";
-import { viewportFadeIn, stampReveal } from "@/lib/motion";
-import { CopyCommand } from "@/components/landing/copy-command";
 
 export function CommandBlock() {
   return (
@@ -19,23 +19,15 @@ export function CommandBlock() {
         </motion.div>
 
         {/* Enlarged CopyCommand with glow */}
-        <motion.div
-          className="flex justify-center"
-          {...viewportFadeIn(0.2)}
-        >
+        <motion.div className="flex justify-center" {...viewportFadeIn(0.2)}>
           <div className="shadow-glow rounded-lg">
             <CopyCommand />
           </div>
         </motion.div>
 
         {/* Runs Locally stamp */}
-        <motion.div
-          className="flex justify-center"
-          {...stampReveal}
-        >
-          <span className="stamp-seal text-accent-green">
-            Runs Locally
-          </span>
+        <motion.div className="flex justify-center" {...stampReveal}>
+          <span className="stamp-seal text-accent-green">Runs Locally</span>
         </motion.div>
 
         {/* Secondary links */}

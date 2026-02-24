@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { viewportFadeIn, DURATION, EASE } from "@/lib/motion";
 import { ThreadNode } from "@/components/landing/thread-line";
+import { DURATION, EASE, viewportFadeIn } from "@/lib/motion";
+import { AnimatePresence, motion } from "framer-motion";
+import { useState } from "react";
 
 type TabId = "tweet" | "linkedin" | "journal";
 
@@ -57,10 +57,7 @@ function TweetContent() {
         "3/ Week 3: The pivot\n\u2192 Twitter API costs $200/mo for signal collection\n\u2192 [PIVOT] Switched to free sources (HN, Reddit, GitHub)\n\u2192 Got 250 signals per run for $0",
         '4/ Week 6: Ship it\n\u2192 [EMOTION] "The story was disappearing between sessions"\n\u2192 That realization became buildarc\n\u2192 One command to recover the build story',
       ].map((tweet, i) => (
-        <div
-          key={i}
-          className="font-mono text-xs text-text leading-relaxed whitespace-pre-line"
-        >
+        <div key={i} className="font-mono text-xs text-text leading-relaxed whitespace-pre-line">
           {colorTags(tweet)}
         </div>
       ))}
@@ -83,26 +80,22 @@ function LinkedInContent() {
       </div>
       <div className="font-[family-name:var(--font-serif)] text-sm text-text leading-relaxed space-y-3">
         <p>
-          I spent 6 weeks building a SaaS with Claude Code. 45 sessions. When it
-          came time to share the story, I realized it had vanished.
+          I spent 6 weeks building a SaaS with Claude Code. 45 sessions. When it came time to share
+          the story, I realized it had vanished.
         </p>
         <p className="text-text-muted">
           The interesting parts &mdash; a{" "}
-          <span className="font-mono text-xs text-accent-amber">[PIVOT]</span>{" "}
-          that saved $200/mo, the{" "}
-          <span className="font-mono text-xs text-accent-blue">[DECISION]</span>{" "}
-          to choose Postgres over MongoDB, the{" "}
-          <span className="font-mono text-xs text-accent-orange">[EMOTION]</span>{" "}
-          that sparked a new tool &mdash; were buried in thousands of lines of
-          tool calls.
+          <span className="font-mono text-xs text-accent-amber">[PIVOT]</span> that saved $200/mo,
+          the <span className="font-mono text-xs text-accent-blue">[DECISION]</span> to choose
+          Postgres over MongoDB, the{" "}
+          <span className="font-mono text-xs text-accent-orange">[EMOTION]</span> that sparked a new
+          tool &mdash; were buried in thousands of lines of tool calls.
         </p>
         <p>
-          So I built buildarc. One command to turn AI coding sessions into
-          content you can actually post.
+          So I built buildarc. One command to turn AI coding sessions into content you can actually
+          post.
         </p>
-        <p className="text-text-dim text-xs font-mono">
-          #buildinpublic #claudecode #devtools #ai
-        </p>
+        <p className="text-text-dim text-xs font-mono">#buildinpublic #claudecode #devtools #ai</p>
       </div>
     </div>
   );
@@ -118,9 +111,7 @@ function JournalContent() {
           <div className="size-1.5 rounded-full bg-accent-amber/50" />
           <div className="size-1.5 rounded-full bg-accent-blue/50" />
         </div>
-        <span className="font-mono text-[10px] text-text-dim">
-          BUILDLOG.md
-        </span>
+        <span className="font-mono text-[10px] text-text-dim">BUILDLOG.md</span>
       </div>
       <div className="font-mono text-xs text-text leading-relaxed space-y-3">
         <div>
@@ -129,8 +120,8 @@ function JournalContent() {
         <div>
           <span className="text-accent-amber">[PIVOT]</span>{" "}
           <span className="text-text">
-            Twitter API pricing killed the original plan. Switched to HN +
-            Reddit + GitHub trending as signal sources.
+            Twitter API pricing killed the original plan. Switched to HN + Reddit + GitHub trending
+            as signal sources.
           </span>
         </div>
         <div>
@@ -146,15 +137,13 @@ function JournalContent() {
         <div>
           <span className="text-accent-orange">[EMOTION]</span>{" "}
           <span className="text-text-muted">
-            &quot;The story was disappearing between sessions. I couldn&apos;t
-            reconstruct the journey.&quot;
+            &quot;The story was disappearing between sessions. I couldn&apos;t reconstruct the
+            journey.&quot;
           </span>
         </div>
         <div>
           <span className="text-accent-blue">[DECISION]</span>{" "}
-          <span className="text-text">
-            Started building buildarc to solve this exact problem.
-          </span>
+          <span className="text-text">Started building buildarc to solve this exact problem.</span>
         </div>
       </div>
     </div>
@@ -223,10 +212,7 @@ export function OutputShowcase() {
         </motion.div>
 
         {/* Mechanism note */}
-        <motion.div
-          className="mt-6 font-mono text-xs text-text-dim"
-          {...viewportFadeIn(0.3)}
-        >
+        <motion.div className="mt-6 font-mono text-xs text-text-dim" {...viewportFadeIn(0.3)}>
           One command. 45 sessions &rarr; 4-tweet thread in 3 seconds.
         </motion.div>
       </div>

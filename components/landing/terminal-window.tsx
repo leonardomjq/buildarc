@@ -1,5 +1,5 @@
-import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
+import type { ReactNode } from "react";
 
 interface TerminalWindowProps {
   title?: string;
@@ -7,18 +7,9 @@ interface TerminalWindowProps {
   className?: string;
 }
 
-export function TerminalWindow({
-  title = "Terminal",
-  children,
-  className,
-}: TerminalWindowProps) {
+export function TerminalWindow({ title = "Terminal", children, className }: TerminalWindowProps) {
   return (
-    <div
-      className={cn(
-        "rounded-lg border border-border bg-surface overflow-hidden",
-        className
-      )}
-    >
+    <div className={cn("rounded-lg border border-border bg-surface overflow-hidden", className)}>
       {/* Title bar */}
       <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border bg-surface-elevated/50">
         <div className="flex items-center gap-1.5">
@@ -26,9 +17,7 @@ export function TerminalWindow({
           <div className="size-2.5 rounded-full bg-accent-amber/60" />
           <div className="size-2.5 rounded-full bg-accent-green/60" />
         </div>
-        <span className="font-mono text-[10px] text-text-dim ml-2">
-          {title}
-        </span>
+        <span className="font-mono text-[10px] text-text-dim ml-2">{title}</span>
       </div>
       {/* Body with scanline overlay */}
       <div className="relative">
