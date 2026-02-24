@@ -35,7 +35,11 @@
     "build": "next build",
     "build:cli": "tsc -p tsconfig.cli.json",
     "start": "next start",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "tsc -p tsconfig.cli.json",
+    "release:patch": "npm version patch && git push && git push --tags && npm publish",
+    "release:minor": "npm version minor && git push && git push --tags && npm publish",
+    "release:major": "npm version major && git push && git push --tags && npm publish"
   },
   "packageManager": "pnpm@10.28.0",
   "dependencies": {

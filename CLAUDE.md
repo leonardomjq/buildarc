@@ -11,6 +11,8 @@ pnpm dev              # Start landing page dev server (Turbopack)
 pnpm build            # Production build (landing page)
 pnpm build:cli        # Compile CLI (src/ -> dist/)
 pnpm typecheck        # TypeScript type checking (tsc --noEmit)
+pnpm release:patch    # Bump patch, publish (bug fixes)
+pnpm release:minor    # Bump minor, publish (new features)
 ```
 
 When done making changes, run `pnpm typecheck` to verify.

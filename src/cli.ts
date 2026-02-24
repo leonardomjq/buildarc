@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { existsSync, mkdirSync, statSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, statSync } from "node:fs";
 import { readFile, writeFile } from "node:fs/promises";
 import { homedir } from "node:os";
 import { join, resolve } from "node:path";
@@ -14,7 +14,9 @@ import type { CliOptions, ContentFormat, OutputFormat } from "./types.js";
 
 // ── Version ─────────────────────────────────────────────────────────
 
-const VERSION = "0.1.0";
+const VERSION = JSON.parse(
+  readFileSync(new URL("../package.json", import.meta.url), "utf-8"),
+).version;
 
 // ── ANSI colors (respects NO_COLOR: https://no-color.org/) ──────────
 
