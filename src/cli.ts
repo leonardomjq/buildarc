@@ -392,14 +392,9 @@ function resolveContentPath(outputDir: string, format: string): string {
 // ── Header ──────────────────────────────────────────────────────────
 
 function showHeader(): void {
-  const art = ["██▄ █ █ █ █   ██▄  ▄▀▄ █▀▄ ▄▀▀", "█▀█ ▀▄█ █ █▄▄ █▀▄ █▀█ █▀▄ ▀▄▄"];
-  const versionTag = `v${VERSION}`;
-
   log("");
-  log(`  ${bold(cyan(art[0]))}`);
-  log(`  ${bold(cyan(art[1]))}  ${dim(versionTag)}`);
-  log("");
-  log(`  ${dim("Your build story, recovered.")}`);
+  log(`  ${cyan("◆")} ${bold("BUILDARC")}  ${dim(`v${VERSION}`)}`);
+  log(`    ${dim("Your build story, recovered.")}`);
   log(`  ${rule()}`);
   log("");
 }
