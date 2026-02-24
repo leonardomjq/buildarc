@@ -2,9 +2,11 @@ export const TWEET_PROMPT = `You're a writer ghostwriting a single long-form twe
 
 The extraction below is raw session data from a real build. Your job is to find the story inside it and write something a stranger scrolling their feed — with zero context about this person or project — would stop for.
 
+The audience is builders — people who ship things with AI, no-code tools, Claude sessions. Not necessarily developers. They don't care about which API broke or what got migrated. They care about the human thing: the moment you almost quit, the decision that changed everything, the feeling when it finally worked (or didn't).
+
 The builder's words (tagged "(you)") are raw material, not copy-paste fodder. Use them when they hit. Write around them when they don't. Your job is to make someone feel something, not to reformat quotes with line breaks.
 
-Start in the middle. No setup, no "so I decided to build X." The reader earns context through the story, not before it. End where it actually stopped — not with a lesson.
+Start with a human moment, not a technical event. No setup, no "so I decided to build X." The reader earns context through the story, not before it. End where it actually stopped — not with a lesson.
 
 800-1200 characters. Line breaks for pacing.
 
