@@ -1,7 +1,7 @@
 {
   "name": "buildarc",
   "version": "0.1.0",
-  "description": "CLI tool that reads Claude Code transcripts and generates build journals and social content",
+  "description": "Your build story, recovered. Turn Claude Code sessions into tweet threads, LinkedIn posts, and build journals.",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -18,7 +18,12 @@
     "dev-journal",
     "cli",
     "ai-coding",
-    "transcript"
+    "transcript",
+    "twitter-thread",
+    "linkedin",
+    "content-creation",
+    "developer-tools",
+    "social-media"
   ],
   "type": "module",
   "engines": {

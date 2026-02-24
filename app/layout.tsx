@@ -46,12 +46,21 @@ export const metadata: Metadata = {
     siteName: "buildarc",
     locale: "en_US",
     type: "website",
+    images: [
+      {
+        url: "/og.png",
+        width: 1200,
+        height: 630,
+        alt: "buildarc — your build story, recovered",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "buildarc — your build story, recovered",
     description:
       "One command turns your Claude Code sessions into tweet threads, build journals, and LinkedIn posts. Your build story, recovered.",
+    images: ["/og.png"],
   },
   robots: {
     index: true,

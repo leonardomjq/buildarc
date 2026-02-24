@@ -1,5 +1,12 @@
+<!-- logo placeholder: replace with actual logo once designed -->
+<!-- <p align="center">
+  <img src=".github/assets/logo.svg" alt="buildarc" width="200">
+</p> -->
+
 ![CI](https://github.com/leonardomjq/buildarc/actions/workflows/ci.yml/badge.svg)
 [![npm](https://img.shields.io/npm/v/buildarc.svg)](https://npmjs.com/package/buildarc)
+[![npm downloads](https://img.shields.io/npm/dm/buildarc.svg)](https://npmjs.com/package/buildarc)
+![zero dependencies](https://img.shields.io/badge/dependencies-0-brightgreen.svg)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 ![node >= 18](https://img.shields.io/badge/node-%3E%3D18-brightgreen.svg)
 
@@ -13,6 +20,11 @@ buildarc reads your [Claude Code](https://claude.ai/code) conversation transcrip
 npx buildarc
 ```
 
+<!-- demo GIF placeholder: replace with actual recording once created via .github/demo.tape -->
+<!-- <p align="center">
+  <img src=".github/assets/demo.gif" alt="buildarc demo" width="640">
+</p> -->
+
 > **Alpha (v0.x)** — The core pipeline works. Output quality is being tuned. [Feedback welcome.](https://github.com/leonardomjq/buildarc/issues)
 
 ---
@@ -21,8 +33,7 @@ npx buildarc
 
 Run `npx buildarc --tweet` on a project with 47 sessions. This is what comes back:
 
-<details>
-<summary><strong>Generated tweet thread</strong></summary>
+**Generated tweet thread:**
 
 ```
 I mass-deleted the landing page three times before I realized the
@@ -41,8 +52,6 @@ The story was right there. I just hadn't been reading it.
 Shipped the landing page in one session after that. Turns out
 the copy writes itself when you know what actually happened.
 ```
-
-</details>
 
 <details>
 <summary><strong>Generated BUILDARC.md excerpt</strong></summary>
@@ -78,6 +87,26 @@ the copy writes itself when you know what actually happened.
 </details>
 
 The extraction finds the moments. Your Claude turns them into a story.
+
+---
+
+## Quick start
+
+1. Build something with Claude Code (you probably already have)
+2. Run `npx buildarc` in your project directory
+3. Pick your format — tweet, LinkedIn, journal, or all three
+
+---
+
+## Features
+
+- **One command** — `npx buildarc`, auto-detects your project, no config
+- **Three formats** — Tweet threads, LinkedIn posts, build journals
+- **Two layers** — Instant heuristic extraction + AI storytelling via your `claude` CLI
+- **Zero dependencies** — Pure Node.js built-ins, installs in seconds
+- **Privacy-first** — Everything runs locally, no data transmitted, no telemetry
+- **Secret scrubbing** — API keys, tokens, and connection strings redacted automatically
+- **Retroactive** — Works on sessions that already happened
 
 ---
 
@@ -233,6 +262,12 @@ Good first issues are labeled [`good first issue`](https://github.com/leonardomj
 - [Security](SECURITY.md)
 - [Roadmap](ROADMAP.md)
 - [License](LICENSE)
+
+<!-- star history: uncomment when repo reaches 100+ stars
+## Star history
+
+[![Star History Chart](https://api.star-history.com/svg?repos=leonardomjq/buildarc&type=Date)](https://star-history.com/#leonardomjq/buildarc&Date)
+-->
 
 ---
 
