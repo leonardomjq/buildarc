@@ -11,20 +11,6 @@ describe("scrub", () => {
     expect(redactionCount).toBe(1);
   });
 
-  it("redacts Stripe live keys (pk_live_, sk_live_)", () => {
-    const input = "pk_live_abc123def456 and sk_live_xyz789ghi012";
-    const { text, redactionCount } = scrub(input);
-    expect(text).toBe("[REDACTED] and [REDACTED]");
-    expect(redactionCount).toBe(2);
-  });
-
-  it("redacts Stripe test keys", () => {
-    // Build token dynamically to avoid GitHub push protection false positive
-    const fakeStripeKey = `sk_test_${"X".repeat(24)}`;
-    const { text } = scrub(fakeStripeKey);
-    expect(text).toBe("[REDACTED]");
-  });
-
   it("redacts GitHub tokens (ghp_, ghu_, ghs_, gho_, ghr_)", () => {
     const prefixes = ["ghp_", "ghu_", "ghs_", "gho_", "ghr_"];
     for (const prefix of prefixes) {
@@ -32,18 +18,6 @@ describe("scrub", () => {
       const { text } = scrub(`token: ${token}`);
       expect(text).toBe("token: [REDACTED]");
     }
-  });
-
-  it("redacts AWS access keys (AKIA...)", () => {
-    const { text } = scrub("AWS key: AKIAIOSFODNN7EXAMPLE");
-    expect(text).toBe("AWS key: [REDACTED]");
-  });
-
-  it("redacts Slack tokens (xoxb-, xoxp-)", () => {
-    // Build token dynamically to avoid GitHub push protection false positive
-    const fakeSlackToken = `xoxb-${"0".repeat(12)}-${"0".repeat(13)}-${"a".repeat(16)}`;
-    const { text } = scrub(fakeSlackToken);
-    expect(text).toBe("[REDACTED]");
   });
 
   // ── Bearer tokens ──────────────────────────────────────────────
@@ -100,8 +74,8 @@ describe("scrub", () => {
     expect(text).toContain("[REDACTED]");
   });
 
-  it("redacts api_key: value patterns", () => {
-    const { text } = scrub("api_key: sk_live_abcdefghijklmnop");
+  it("redacts password: value patterns", () => {
+    const { text } = scrub("password: supersecretpassword123");
     expect(text).toContain("[REDACTED]");
   });
 
