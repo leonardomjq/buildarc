@@ -31,7 +31,7 @@ npx buildarc
 
 ## See what you get
 
-Run `npx buildarc --tweet` on a project with 47 sessions. This is what comes back:
+Run `npx buildarc --tweet` on a real project. This is what comes back:
 
 **Generated tweet thread:**
 
@@ -102,7 +102,7 @@ The extraction finds the moments. Your Claude turns them into a story.
 
 - **One command** — `npx buildarc`, auto-detects your project, no config
 - **Three formats** — Tweet threads, LinkedIn posts, build journals
-- **Two layers** — Instant heuristic extraction + AI storytelling via your `claude` CLI
+- **Two layers** — Instant extraction + AI storytelling via your `claude` CLI
 - **Zero dependencies** — Pure Node.js built-ins, installs in seconds
 - **Privacy-first** — Everything runs locally, no data transmitted, no telemetry
 - **Secret scrubbing** — API keys, tokens, and connection strings redacted automatically
@@ -110,7 +110,7 @@ The extraction finds the moments. Your Claude turns them into a story.
 
 ---
 
-## What it does
+## How it works
 
 You build things with Claude Code. Those sessions contain decisions, pivots, breakthroughs, and dead ends — a story. buildarc finds that story and helps you share it.
 
@@ -130,8 +130,6 @@ You build things with Claude Code. Those sessions contain decisions, pivots, bre
     4. All of the above
     5. Just the summary
 ```
-
-## How it works
 
 Two layers — extraction is instant, storytelling is AI:
 
@@ -214,13 +212,14 @@ Flags are combinable: `buildarc --tweet --linkedin` generates both without the i
 
 ## Origin story
 
-buildarc was born from building [ScoutAgent](https://github.com/leonardomjq) — a SaaS that didn't work out. 45+ Claude Code sessions of building, pivoting, and learning. When the project wound down, the story of that build almost disappeared into unread `.jsonl` files. buildarc exists because the content should have been easy to write but wasn't.
+buildarc was born from building ScoutAgent — a SaaS that didn't work out. 45+ Claude Code sessions of building, pivoting, and learning. When the project wound down, the story of that build almost disappeared into unread `.jsonl` files. buildarc exists because the content should have been easy to write but wasn't.
 
 This README was informed by buildarc's own output. Dogfooding all the way down.
 
 ---
 
-## What gets redacted
+<details>
+<summary><strong>What gets redacted</strong></summary>
 
 buildarc automatically scrubs secrets from your extracted moments before they reach shareable content:
 
@@ -231,6 +230,8 @@ buildarc automatically scrubs secrets from your extracted moments before they re
 - Generic secret assignments (`token=`, `password=`, `credentials=`)
 
 Matches are replaced with `[REDACTED]` — visible, not silent. See [SECURITY.md](SECURITY.md) for the full list and limitations.
+
+</details>
 
 ## Requirements
 
@@ -268,11 +269,3 @@ Good first issues are labeled [`good first issue`](https://github.com/leonardomj
 
 [![Star History Chart](https://api.star-history.com/svg?repos=leonardomjq/buildarc&type=Date)](https://star-history.com/#leonardomjq/buildarc&Date)
 -->
-
----
-
-```bash
-npx buildarc
-```
-
-Your build story, recovered.
