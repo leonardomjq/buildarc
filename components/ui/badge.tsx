@@ -1,16 +1,11 @@
 import { cn } from "@/lib/utils";
 
 const variantClasses = {
-  default:
-    "bg-surface-elevated text-text-muted border-border",
-  success:
-    "bg-accent-green/10 text-accent-green border-accent-green/30",
-  warning:
-    "bg-accent-amber/10 text-accent-amber border-accent-amber/30",
-  danger:
-    "bg-accent-red/10 text-accent-red border-accent-red/30",
-  info:
-    "bg-accent-blue/10 text-accent-blue border-accent-blue/30",
+  default: "bg-surface-elevated text-text-muted border-border",
+  success: "bg-accent-green/10 text-accent-green border-accent-green/30",
+  warning: "bg-accent-amber/10 text-accent-amber border-accent-amber/30",
+  danger: "bg-accent-red/10 text-accent-red border-accent-red/30",
+  info: "bg-accent-blue/10 text-accent-blue border-accent-blue/30",
 } as const;
 
 const shapeClasses = {

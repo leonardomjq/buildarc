@@ -19,17 +19,12 @@ export async function generateContent(
   style?: string,
 ): Promise<string> {
   const formatPrompts = PROMPTS[format];
-  const systemPrompt = formatPrompts[style ?? "narrative"] ?? formatPrompts["narrative"];
+  const systemPrompt = formatPrompts[style ?? "narrative"] ?? formatPrompts.narrative;
 
   return new Promise((resolve, reject) => {
     const proc = spawn(
       "claude",
-      [
-        "-p",
-        "--output-format", "text",
-        "--model", "sonnet",
-        "--system-prompt", systemPrompt,
-      ],
+      ["-p", "--output-format", "text", "--model", "sonnet", "--system-prompt", systemPrompt],
       {
         stdio: ["pipe", "pipe", "pipe"],
       },
@@ -57,14 +52,15 @@ export async function generateContent(
       clearTimeout(timeout);
       if (killed) return;
       if (code !== 0) {
-        reject(
-          new Error(
-            `claude exited with code ${code}${stderr ? `: ${stderr.trim()}` : ""}`,
-          ),
-        );
+        reject(new Error(`claude exited with code ${code}${stderr ? `: ${stderr.trim()}` : ""}`));
         return;
       }
-      resolve(stdout.trim());
+      const output = stdout.trim();
+      if (!output) {
+        reject(new Error("claude returned empty output"));
+        return;
+      }
+      resolve(output);
     });
 
     proc.on("error", (err) => {

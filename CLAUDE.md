@@ -11,11 +11,15 @@ pnpm dev              # Start landing page dev server (Turbopack)
 pnpm build            # Production build (landing page)
 pnpm build:cli        # Compile CLI (src/ -> dist/)
 pnpm typecheck        # TypeScript type checking (tsc --noEmit)
+pnpm test             # Run test suite (vitest)
+pnpm test:watch       # Run tests in watch mode
+pnpm lint             # Check code style (Biome)
+pnpm lint:fix         # Auto-fix code style issues
 pnpm release:patch    # Bump patch, publish (bug fixes)
 pnpm release:minor    # Bump minor, publish (new features)
 ```
 
-When done making changes, run `pnpm typecheck` to verify.
+When done making changes, run `pnpm typecheck && pnpm test && pnpm lint` to verify.
 
 ## Architecture
 
@@ -39,12 +43,13 @@ They don't share code. The CLI uses Node built-ins only. The landing page is Rea
 
 Two layers: extraction (heuristic, instant) and storytelling (AI via user's `claude` CLI).
 
-1. **Parser** (`src/parser.ts`) -- Stream `.jsonl` files line-by-line, filter to user (string content, no command tags) and assistant (text blocks >= 20 chars + tool_use names) events, group into sessions
-2. **Extractor** (`src/extractor.ts`) -- Regex-based classification of key moments (DECISION, PIVOT, EMOTION, DIRECTIVE, QUESTION). Computes stats, groups by date.
-3. **Formatter** (`src/formatter.ts`) -- Outputs extraction as Markdown (BUILDARC.md) or JSON (buildarc.json). This is the structured data layer.
-4. **Prompts** (`src/prompts.ts`) -- Storytelling prompt templates for tweet/linkedin/journal as embedded string constants
-5. **Storyteller** (`src/storyteller.ts`) -- Spawns `claude -p --system-prompt <prompt> --model sonnet` with extraction as stdin. Returns polished social content. Graceful fallback if `claude` CLI isn't installed.
-6. **CLI** (`src/cli.ts`) -- Entry point. Arg parsing, auto-detect project, orchestration, interactive menu, extraction caching (skips re-parse on re-runs if BUILDARC.md is fresh).
+1. **Parser** (`src/parser.ts`) -- Stream `.jsonl` files line-by-line, filter to user (string content, no command tags) and assistant (text blocks >= 20 chars + tool_use names) events, group into sessions. Returns skip stats for malformed line warnings.
+2. **Extractor** (`src/extractor.ts`) -- Regex-based classification of key moments (DECISION, PIVOT, EMOTION, DIRECTIVE, QUESTION). Runs scrubber on excerpts. Computes stats, groups by date.
+3. **Scrubber** (`src/scrubber.ts`) -- Detects and redacts API keys, tokens, connection strings, and env secrets from moment excerpts before they reach shareable content.
+4. **Formatter** (`src/formatter.ts`) -- Outputs extraction as Markdown (BUILDARC.md) or JSON (buildarc.json). This is the structured data layer.
+5. **Prompts** (`src/prompts.ts`) -- Storytelling prompt templates for tweet/linkedin/journal as embedded string constants
+6. **Storyteller** (`src/storyteller.ts`) -- Spawns `claude -p --system-prompt <prompt> --model sonnet` with extraction as stdin. Returns polished social content. Graceful fallback if `claude` CLI isn't installed.
+7. **CLI** (`src/cli.ts`) -- Entry point. Arg parsing, auto-detect project, orchestration, interactive menu, extraction caching (skips re-parse on re-runs if BUILDARC.md is fresh).
 
 ### CLI flags
 

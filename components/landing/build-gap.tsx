@@ -1,8 +1,8 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { viewportFadeIn, clipRevealStagger, clipRevealItem } from "@/lib/motion";
 import { ThreadNode } from "@/components/landing/thread-line";
+import { clipRevealItem, clipRevealStagger, viewportFadeIn } from "@/lib/motion";
+import { motion } from "framer-motion";
 
 const beats = [
   {
@@ -59,10 +59,7 @@ export function BuildGap() {
         </motion.div>
 
         {/* Stat line */}
-        <motion.div
-          className="mt-10 font-mono text-xs text-text-dim"
-          {...viewportFadeIn(0.6)}
-        >
+        <motion.div className="mt-10 font-mono text-xs text-text-dim" {...viewportFadeIn(0.6)}>
           45 sessions &middot; 87 moments &middot;{" "}
           <span className="text-accent-amber">0 posts written</span>
         </motion.div>

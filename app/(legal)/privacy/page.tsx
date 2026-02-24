@@ -40,15 +40,11 @@ const sections = [
 export default function PrivacyPage() {
   return (
     <article>
-      <p className="font-mono text-[10px] text-text-dim uppercase tracking-widest mb-2">
-        Legal
-      </p>
+      <p className="font-mono text-[10px] text-text-dim uppercase tracking-widest mb-2">Legal</p>
       <h1 className="font-[family-name:var(--font-display)] text-3xl font-bold text-text mb-2">
         Privacy Policy
       </h1>
-      <p className="font-mono text-xs text-text-dim mb-12">
-        Last updated: February 2026
-      </p>
+      <p className="font-mono text-xs text-text-dim mb-12">Last updated: February 2026</p>
 
       <div className="space-y-10">
         {sections.map((section) => (

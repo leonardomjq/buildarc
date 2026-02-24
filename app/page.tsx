@@ -1,13 +1,13 @@
-import { Github } from "lucide-react";
-import { Logo } from "@/components/logo";
-import { ThreadLine } from "@/components/landing/thread-line";
-import { GhostThreadHero } from "@/components/landing/ghost-thread-hero";
 import { BuildGap } from "@/components/landing/build-gap";
-import { OutputShowcase } from "@/components/landing/output-showcase";
-import { OriginCaseStudy } from "@/components/landing/origin-case-study";
 import { CommandBlock } from "@/components/landing/command-block";
+import { GhostThreadHero } from "@/components/landing/ghost-thread-hero";
 import { LandingFooter } from "@/components/landing/landing-footer";
+import { OriginCaseStudy } from "@/components/landing/origin-case-study";
+import { OutputShowcase } from "@/components/landing/output-showcase";
 import { StickyCta } from "@/components/landing/sticky-cta";
+import { ThreadLine } from "@/components/landing/thread-line";
+import { Logo } from "@/components/logo";
+import { Github } from "lucide-react";
 
 export default function LandingPage() {
   return (

@@ -1,8 +1,8 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { CopyCommand } from "@/components/landing/copy-command";
 import { ThreadNode } from "@/components/landing/thread-line";
+import { motion } from "framer-motion";
 
 export function GhostThreadHero() {
   return (
@@ -30,7 +30,9 @@ export function GhostThreadHero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          Your build story,<br />recovered.
+          Your build story,
+          <br />
+          recovered.
         </motion.h1>
 
         {/* One sentence that grounds the promise */}
@@ -40,8 +42,7 @@ export function GhostThreadHero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.15 }}
         >
-          One command turns your Claude Code sessions into
-          content you can actually post.
+          One command turns your Claude Code sessions into content you can actually post.
         </motion.p>
 
         {/* The answer */}

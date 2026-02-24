@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 
 const variantClasses = {
   primary:
@@ -18,8 +18,7 @@ const sizeClasses = {
 const baseClasses =
   "rounded focus-visible:focus-ring inline-flex items-center justify-center gap-2 font-mono";
 
-export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: keyof typeof variantClasses;
   size?: keyof typeof sizeClasses;
   ref?: React.Ref<HTMLButtonElement>;
@@ -41,8 +40,7 @@ export function Button({
   );
 }
 
-export interface ButtonLinkProps
-  extends React.ComponentProps<typeof Link> {
+export interface ButtonLinkProps extends React.ComponentProps<typeof Link> {
   variant?: keyof typeof variantClasses;
   size?: keyof typeof sizeClasses;
 }

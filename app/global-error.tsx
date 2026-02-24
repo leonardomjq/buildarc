@@ -17,14 +17,11 @@ export default function GlobalError({
           justifyContent: "center",
           backgroundColor: "#0A0A0A",
           color: "#E5E5E5",
-          fontFamily:
-            "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace",
+          fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace",
         }}
       >
         <div style={{ textAlign: "center", padding: "2rem" }}>
-          <h2 style={{ fontSize: "1.25rem", marginBottom: "0.5rem" }}>
-            Something went wrong
-          </h2>
+          <h2 style={{ fontSize: "1.25rem", marginBottom: "0.5rem" }}>Something went wrong</h2>
           <p
             style={{
               fontSize: "0.875rem",

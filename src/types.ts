@@ -74,12 +74,7 @@ export interface ParsedSession {
 
 // ── Extracted types ─────────────────────────────────────────────────
 
-export type MomentType =
-  | "DECISION"
-  | "PIVOT"
-  | "EMOTION"
-  | "DIRECTIVE"
-  | "QUESTION";
+export type MomentType = "DECISION" | "PIVOT" | "EMOTION" | "DIRECTIVE" | "QUESTION";
 
 export interface Moment {
   type: MomentType;

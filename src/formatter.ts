@@ -1,5 +1,5 @@
-import type { BuildLog, Moment, MomentType, Session } from "./types.js";
 import { TYPE_PRIORITY } from "./extractor.js";
+import type { BuildLog, Moment, MomentType, Session } from "./types.js";
 
 // ── Markdown formatter ──────────────────────────────────────────────
 
@@ -81,9 +81,7 @@ export function formatMarkdown(log: BuildLog): string {
   lines.push(
     `- **Decisions:** ${stats.decisions} | **Pivots:** ${stats.pivots} | **Emotions:** ${stats.emotions}`,
   );
-  lines.push(
-    `- **Directives:** ${stats.directives} | **Questions:** ${stats.questions}`,
-  );
+  lines.push(`- **Directives:** ${stats.directives} | **Questions:** ${stats.questions}`);
   lines.push(`- **Date range:** ${stats.dateRange.from} → ${stats.dateRange.to}`);
 
   if (stats.topTools.length > 0) {
@@ -99,9 +97,7 @@ export function formatMarkdown(log: BuildLog): string {
   if (topMoments.length > 0) {
     lines.push("## Key moments");
     lines.push("");
-    lines.push(
-      "> These are the highest-signal moments. The full timeline follows below.",
-    );
+    lines.push("> These are the highest-signal moments. The full timeline follows below.");
     lines.push("");
     for (const m of topMoments) {
       lines.push(formatMoment(m));

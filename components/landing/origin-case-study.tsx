@@ -1,8 +1,8 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { viewportFadeIn, driftIn, clipRevealStagger, clipRevealItem } from "@/lib/motion";
 import { ThreadNode } from "@/components/landing/thread-line";
+import { clipRevealItem, clipRevealStagger, driftIn, viewportFadeIn } from "@/lib/motion";
+import { motion } from "framer-motion";
 
 const rawSessionCards = [
   "Session #12 — Auth debugging",
@@ -24,19 +24,17 @@ export function OriginCaseStudy() {
           {/* Left: Narrative */}
           <motion.div className="space-y-5" {...viewportFadeIn(0)}>
             <p className="font-[family-name:var(--font-serif)] text-text text-sm leading-relaxed">
-              I spent six weeks building ScoutAgent with Claude Code. Forty-five
-              sessions. When I tried to write a build-in-public thread, I
-              realized the story had vanished &mdash; buried in thousands of lines
-              of tool calls and progress events inside{" "}
+              I spent six weeks building ScoutAgent with Claude Code. Forty-five sessions. When I
+              tried to write a build-in-public thread, I realized the story had vanished &mdash;
+              buried in thousands of lines of tool calls and progress events inside{" "}
               <code className="font-mono text-xs text-accent-green bg-surface-elevated px-1.5 py-0.5 rounded">
                 .claude/projects/
               </code>
               .
             </p>
             <p className="font-[family-name:var(--font-serif)] text-text text-sm leading-relaxed">
-              So I built buildarc. One command to turn those sessions into
-              something I could actually post. The ScoutAgent thread was its
-              first output.
+              So I built buildarc. One command to turn those sessions into something I could
+              actually post. The ScoutAgent thread was its first output.
             </p>
           </motion.div>
 
@@ -65,16 +63,8 @@ export function OriginCaseStudy() {
             </motion.div>
 
             {/* Arrow down */}
-            <motion.div
-              className="flex justify-center text-text-dim"
-              {...viewportFadeIn(0.6)}
-            >
-              <svg
-                width="24"
-                height="40"
-                viewBox="0 0 24 40"
-                fill="none"
-              >
+            <motion.div className="flex justify-center text-text-dim" {...viewportFadeIn(0.6)}>
+              <svg width="24" height="40" viewBox="0 0 24 40" fill="none">
                 <path
                   d="M12 0 V32 M6 26 L12 34 L18 26"
                   stroke="currentColor"
@@ -94,8 +84,8 @@ export function OriginCaseStudy() {
                 Output
               </div>
               <p className="font-mono text-xs text-text leading-relaxed">
-                4-tweet thread covering 6 weeks, 87 key moments, and the pivot
-                that saved the project.
+                4-tweet thread covering 6 weeks, 87 key moments, and the pivot that saved the
+                project.
               </p>
             </motion.div>
           </div>

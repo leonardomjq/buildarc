@@ -7,9 +7,7 @@ export function LandingFooter() {
       <div className="border-t border-dashed border-text-dim/30 mb-8" />
 
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4 font-mono text-xs">
-        <div className="text-text-dim uppercase tracking-widest">
-          End of Arc
-        </div>
+        <div className="text-text-dim uppercase tracking-widest">End of Arc</div>
 
         <nav className="flex items-center gap-6 text-text-muted">
           <a
@@ -36,9 +34,7 @@ export function LandingFooter() {
           </Link>
         </nav>
 
-        <div className="text-text-dim/50 uppercase tracking-widest text-[10px]">
-          MIT License
-        </div>
+        <div className="text-text-dim/50 uppercase tracking-widest text-[10px]">MIT License</div>
       </div>
     </footer>
   );
