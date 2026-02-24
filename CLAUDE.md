@@ -33,11 +33,33 @@ They don't share code. The CLI uses Node built-ins only. The landing page is Rea
 - `lib/motion.ts` -- Framer Motion animation presets
 - `lib/utils.ts` -- `cn()` Tailwind class merge helper
 
-### CLI pipeline (v1 = no AI, pure heuristics)
+### CLI pipeline
 
-1. **Parser** -- Read `.jsonl` files, group events by sessionId, filter to user/assistant types
-2. **Extractor** -- Regex-based classification of key moments (DECISION, PIVOT, EMOTION, DIRECTIVE, QUESTION)
-3. **Formatter** -- Output as Markdown, JSON, Tweet thread, or LinkedIn post
+Two layers: extraction (heuristic, instant) and storytelling (AI via user's `claude` CLI).
+
+1. **Parser** (`src/parser.ts`) -- Stream `.jsonl` files line-by-line, filter to user (string content, no command tags) and assistant (text blocks >= 20 chars + tool_use names) events, group into sessions
+2. **Extractor** (`src/extractor.ts`) -- Regex-based classification of key moments (DECISION, PIVOT, EMOTION, DIRECTIVE, QUESTION). Computes stats, groups by date.
+3. **Formatter** (`src/formatter.ts`) -- Outputs extraction as Markdown (BUILDARC.md) or JSON (buildarc.json). This is the structured data layer.
+4. **Prompts** (`src/prompts.ts`) -- Storytelling prompt templates for tweet/linkedin/journal as embedded string constants
+5. **Storyteller** (`src/storyteller.ts`) -- Spawns `claude -p --system-prompt <prompt> --model sonnet` with extraction as stdin. Returns polished social content. Graceful fallback if `claude` CLI isn't installed.
+6. **CLI** (`src/cli.ts`) -- Entry point. Arg parsing, auto-detect project, orchestration, interactive menu, extraction caching (skips re-parse on re-runs if BUILDARC.md is fresh).
+
+### CLI flags
+
+```
+--format md|json     Extraction output format (default: md)
+--since DATE         Filter sessions after date
+--sessions N         Last N sessions only
+--output, -o DIR     Output directory (default: .buildarc/)
+--no-ai              Extraction only, skip storytelling
+--tweet              Generate X/Twitter thread (skips menu)
+--linkedin           Generate LinkedIn post (skips menu)
+--journal            Generate build journal (skips menu)
+--style <name>       Content style variant (tweet: narrative|shitpost)
+-q, --quiet          Minimal output
+```
+
+Flags are combinable: `buildarc --tweet --linkedin` generates both without the interactive menu. On re-runs with content flags, reuses fresh extraction instead of re-parsing.
 
 ## Voice & Messaging
 

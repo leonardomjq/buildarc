@@ -20,6 +20,7 @@
     "ai-coding",
     "transcript"
   ],
+  "type": "module",
   "engines": {
     "node": ">=18"
   },
