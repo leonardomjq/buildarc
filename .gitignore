@@ -18,6 +18,9 @@
 # CLI compiled output
 /dist
 
+# CLI generated output
+.buildarc/
+
 # misc
 .DS_Store
 *.pem
