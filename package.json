@@ -1,6 +1,6 @@
 {
   "name": "buildarc",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "Your build story, recovered. Turn Claude Code sessions into tweet threads, LinkedIn posts, and build journals.",
   "license": "MIT",
   "repository": {
