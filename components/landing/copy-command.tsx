@@ -14,6 +14,7 @@ export function CopyCommand() {
 
   return (
     <button
+      type="button"
       onClick={handleCopy}
       className="inline-flex items-center gap-3 bg-surface border border-border rounded px-4 py-2.5 group hover:border-accent-green/50 transition-colors cursor-pointer"
     >

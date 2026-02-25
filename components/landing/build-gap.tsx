@@ -45,9 +45,9 @@ export function BuildGap() {
           whileInView="visible"
           viewport={{ once: true }}
         >
-          {beats.map((beat, i) => (
+          {beats.map((beat) => (
             <motion.p
-              key={i}
+              key={beat.text}
               className={`font-[family-name:var(--font-serif)] text-sm leading-relaxed ${
                 beat.muted ? "text-text-muted" : "text-text"
               }`}

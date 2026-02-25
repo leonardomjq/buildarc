@@ -27,11 +27,12 @@ const tagColor: Record<string, string> = {
 
 function colorTags(text: string) {
   const parts = text.split(/(\[[A-Z]+\])/g);
-  return parts.map((part, i) => {
+  return parts.map((part, idx) => {
     const color = tagColor[part];
     if (color) {
       return (
-        <span key={i} className={color}>
+        // biome-ignore lint/suspicious/noArrayIndexKey: static render-only list, items never reorder
+        <span key={idx} className={color}>
           {part}
         </span>
       );
@@ -56,8 +57,11 @@ function TweetContent() {
         "2/ Week 1\u20132: Setup and architecture\n\u2192 [DECISION] Cookie-based sessions, not JWT\n\u2192 [DECISION] Postgres over MongoDB\n\u2192 Felt fast. Everything worked on the first try.",
         "3/ Week 3: The pivot\n\u2192 Twitter API costs $200/mo for signal collection\n\u2192 [PIVOT] Switched to free sources (HN, Reddit, GitHub)\n\u2192 Got 250 signals per run for $0",
         '4/ Week 6: Ship it\n\u2192 [EMOTION] "The story was disappearing between sessions"\n\u2192 That realization became buildarc\n\u2192 One command to recover the build story',
-      ].map((tweet, i) => (
-        <div key={i} className="font-mono text-xs text-text leading-relaxed whitespace-pre-line">
+      ].map((tweet) => (
+        <div
+          key={tweet.slice(0, 2)}
+          className="font-mono text-xs text-text leading-relaxed whitespace-pre-line"
+        >
           {colorTags(tweet)}
         </div>
       ))}
@@ -182,6 +186,7 @@ export function OutputShowcase() {
           <div className="flex gap-0 border-b border-border">
             {tabs.map((tab) => (
               <button
+                type="button"
                 key={tab.id}
                 onClick={() => setActive(tab.id)}
                 className={`px-4 py-2 font-mono text-xs transition-colors relative -mb-px ${

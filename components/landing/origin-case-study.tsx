@@ -48,13 +48,13 @@ export function OriginCaseStudy() {
               whileInView="visible"
               viewport={{ once: true }}
             >
-              {rawSessionCards.map((session, i) => (
+              {rawSessionCards.map((session, idx) => (
                 <motion.div
-                  key={i}
+                  key={session}
                   className="font-mono text-[10px] text-text-dim bg-surface border border-border rounded px-3 py-1.5 truncate"
                   variants={clipRevealItem}
                   style={{
-                    transform: `translateX(${(i % 3) * 8 - 8}px)`,
+                    transform: `translateX(${(idx % 3) * 8 - 8}px)`,
                   }}
                 >
                   {session}
@@ -64,7 +64,7 @@ export function OriginCaseStudy() {
 
             {/* Arrow down */}
             <motion.div className="flex justify-center text-text-dim" {...viewportFadeIn(0.6)}>
-              <svg width="24" height="40" viewBox="0 0 24 40" fill="none">
+              <svg width="24" height="40" viewBox="0 0 24 40" fill="none" aria-hidden="true">
                 <path
                   d="M12 0 V32 M6 26 L12 34 L18 26"
                   stroke="currentColor"
