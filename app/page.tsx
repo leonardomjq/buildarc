@@ -1,13 +1,24 @@
-import { BuildGap } from "@/components/landing/build-gap";
-import { CommandBlock } from "@/components/landing/command-block";
 import { GhostThreadHero } from "@/components/landing/ghost-thread-hero";
 import { LandingFooter } from "@/components/landing/landing-footer";
-import { OriginCaseStudy } from "@/components/landing/origin-case-study";
-import { OutputShowcase } from "@/components/landing/output-showcase";
-import { StickyCta } from "@/components/landing/sticky-cta";
 import { ThreadLine } from "@/components/landing/thread-line";
 import { Logo } from "@/components/logo";
 import { Github } from "lucide-react";
+import dynamic from "next/dynamic";
+
+const BuildGap = dynamic(() => import("@/components/landing/build-gap").then((m) => m.BuildGap));
+const OutputShowcase = dynamic(() =>
+  import("@/components/landing/output-showcase").then((m) => m.OutputShowcase),
+);
+const OriginCaseStudy = dynamic(() =>
+  import("@/components/landing/origin-case-study").then((m) => m.OriginCaseStudy),
+);
+const CommandBlock = dynamic(() =>
+  import("@/components/landing/command-block").then((m) => m.CommandBlock),
+);
+const StickyCta = dynamic(
+  () => import("@/components/landing/sticky-cta").then((m) => m.StickyCta),
+  { ssr: false },
+);
 
 export default function LandingPage() {
   return (

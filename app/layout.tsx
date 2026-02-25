@@ -1,4 +1,3 @@
-import { ToastProvider } from "@/components/toast";
 import type { Metadata } from "next";
 import { Instrument_Serif, Inter, JetBrains_Mono, Lora } from "next/font/google";
 import "./globals.css";
@@ -78,9 +77,7 @@ export default function RootLayout({
       lang="en"
       className={`dark ${inter.variable} ${jetbrainsMono.variable} ${instrumentSerif.variable} ${lora.variable}`}
     >
-      <body className="min-h-screen bg-bg text-text font-sans antialiased">
-        <ToastProvider>{children}</ToastProvider>
-      </body>
+      <body className="min-h-screen bg-bg text-text font-sans antialiased">{children}</body>
     </html>
   );
 }

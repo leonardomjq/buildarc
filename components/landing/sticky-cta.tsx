@@ -25,7 +25,7 @@ export function StickyCta() {
 
   return (
     <AnimatePresence>
-      {visible && (
+      {visible ? (
         <>
           {/* Desktop: top bar */}
           <motion.div
@@ -66,7 +66,7 @@ export function StickyCta() {
             </a>
           </motion.div>
         </>
-      )}
+      ) : null}
     </AnimatePresence>
   );
 }
