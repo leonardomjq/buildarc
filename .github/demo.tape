@@ -5,9 +5,9 @@
 Output .github/assets/demo.gif
 
 Set Shell "bash"
-Set FontSize 16
-Set Width 640
-Set Height 480
+Set FontSize 15
+Set Width 720
+Set Height 460
 Set Theme "Catppuccin Mocha"
 Set Padding 20
 Set TypingSpeed 40ms
@@ -29,4 +29,4 @@ Type "npx buildarc"
 Sleep 300ms
 Enter
 
-Sleep 14s
+Sleep 18s

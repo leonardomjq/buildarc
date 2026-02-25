@@ -526,44 +526,53 @@ const BOX_INNER_WIDTH = 65;
 
 const SPINNER_FRAMES = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
 
-const MESSAGE_INTERVAL_MS = 4000;
+const MESSAGE_INTERVAL_MS = 8000;
 
 const SPINNER_MESSAGES: Record<string, string[]> = {
   tweet: [
     "Reading your moments...",
-    "Finding the story...",
+    "Finding the story arc...",
     "Crafting your thread...",
     "Finding the hook...",
     "Compressing weeks into tweets...",
-    "Claude is thinking...",
-    "Good writing takes a minute...",
+    "Drafting, revising, polishing...",
+    "Claude is a slow writer — hang tight...",
+    "Still going — good threads take a minute...",
+    "Refining the narrative...",
     "Almost there...",
   ],
   linkedin: [
     "Reading your moments...",
-    "Finding the story...",
+    "Finding the story arc...",
     "Structuring your insights...",
     "Writing for the feed...",
     "Polishing the narrative...",
-    "Claude is thinking...",
-    "Good writing takes a minute...",
+    "Drafting, revising, polishing...",
+    "Claude is a slow writer — hang tight...",
+    "Still going — good posts take a minute...",
+    "Refining the narrative...",
     "Almost there...",
   ],
   journal: [
     "Reading your moments...",
-    "Finding the story...",
+    "Finding the story arc...",
     "Weaving the narrative...",
     "Recovering the journey...",
     "Connecting the threads...",
-    "Claude is thinking...",
-    "Good writing takes a minute...",
+    "Drafting, revising, polishing...",
+    "Claude is a slow writer — hang tight...",
+    "Still going — good journals take a minute...",
+    "Refining the narrative...",
     "Almost there...",
   ],
   parallel: [
     "Writing all three at once...",
     "Thread, post, and journal in flight...",
     "Claude is multitasking...",
-    "Good writing takes a minute...",
+    "Drafting, revising, polishing...",
+    "Claude is a slow writer — hang tight...",
+    "Still going — this takes about a minute...",
+    "Refining the narratives...",
     "Almost there...",
   ],
 };
@@ -683,6 +692,8 @@ async function generateSingle(
 
   if (!quiet) {
     log("");
+    log(dim("  This usually takes 60–90 seconds — Claude is writing, not fetching."));
+    log("");
     stopSpinner = startSpinner(SPINNER_MESSAGES[fmt] ?? [`Writing your ${label}...`]);
   }
 
@@ -734,6 +745,8 @@ async function generateParallel(
   let stopSpinner: (() => void) | null = null;
 
   if (!quiet) {
+    log("");
+    log(dim("  This usually takes 60–90 seconds — Claude is writing, not fetching."));
     log("");
     stopSpinner = startSpinner(SPINNER_MESSAGES.parallel);
   }

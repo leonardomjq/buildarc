@@ -17,10 +17,9 @@ buildarc reads your [Claude Code](https://claude.ai/code) conversation transcrip
 npx buildarc
 ```
 
-<!-- demo GIF placeholder: replace with actual recording once created via .github/demo.tape -->
-<!-- <p align="center">
+<p align="center">
   <img src=".github/assets/demo.gif" alt="buildarc demo" width="640">
-</p> -->
+</p>
 
 ---
 

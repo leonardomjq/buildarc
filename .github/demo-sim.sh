@@ -1,68 +1,84 @@
 #!/bin/bash
 # Simulated buildarc output for demo recording
-# This script mimics the full interactive CLI experience
+# This script mimics the full CLI experience (v0.2.x)
 
 printf "\n"
-printf "  \033[1mbuildarc\033[0m v0.1.0\n"
+printf "  \033[36m◆\033[0m \033[1mBUILDARC\033[0m  \033[2mv0.2.1\033[0m\n"
+printf "    \033[2mYour build story, recovered.\033[0m\n"
+printf "  \033[2m────────────────\033[0m\n"
 printf "\n"
 sleep 0.4
-printf "  Reading your Claude Code sessions...\n"
+printf "  \033[2mReading your Claude Code sessions...\033[0m\n"
+printf "\n"
 sleep 1.2
-printf "  Found \033[1;32m47 sessions\033[0m | \033[1;36m183 moments\033[0m | 12 decisions, 3 pivots\n"
+printf "  \033[1m47\033[0m sessions  \033[1m183\033[0m moments  \033[32m12\033[0m decisions  \033[33m3\033[0m pivots                  \033[2m1.2s\033[0m\n"
+sleep 0.3
+printf "  Saved to \033[2m.buildarc/BUILDARC.md\033[0m\n"
 sleep 0.5
 printf "\n"
-printf "  Build summary saved to \033[2m.buildarc/BUILDARC.md\033[0m\n"
-sleep 0.6
+printf "  \033[2m────────────────\033[0m\n"
+
+# Arrow menu
 printf "\n"
-printf "  What do you want to share?\n"
+printf "  \033[1mWhat do you want to share?\033[0m\n"
 printf "\n"
-sleep 0.3
-printf "    1. X thread\n"
-sleep 0.1
-printf "    2. LinkedIn post\n"
-sleep 0.1
-printf "    3. Build journal\n"
-sleep 0.1
-printf "    4. All of the above\n"
-sleep 0.1
-printf "    5. Just the summary\n"
+printf "  \033[36m❯\033[0m \033[1mX thread\033[0m\n"
+printf "    LinkedIn post\n"
+printf "    Build journal\n"
+printf "    All of the above\n"
+printf "    Just the summary\n"
+sleep 1.5
+
+# Expectation-setter + spinner
 printf "\n"
-sleep 1.2
-printf "  > \033[1;36m1\033[0m\n"
-sleep 0.6
+printf "  \033[2mThis usually takes 60–90 seconds — Claude is writing, not fetching.\033[0m\n"
 printf "\n"
-printf "  Generating X thread...\n"
-sleep 1.4
-printf "  \033[1;32m✓\033[0m Saved to \033[2m.buildarc/tweet.md\033[0m\n"
 sleep 0.4
-printf "\n"
-printf "  \033[2m─────────────────────────────────────────────\033[0m\n"
-printf "\n"
+frames=("⠋" "⠙" "⠹" "⠸" "⠼" "⠴" "⠦" "⠧" "⠇" "⠏")
+messages=(
+  "Reading your moments..."
+  "Finding the story..."
+  "Crafting your thread..."
+  "Finding the hook..."
+  "Compressing weeks into tweets..."
+)
+
+elapsed=0
+msg_idx=0
+for i in $(seq 1 50); do
+  frame=${frames[$((i % 10))]}
+  # Advance message every ~10 frames (≈1s)
+  msg_idx=$(( i / 10 ))
+  if [ $msg_idx -ge ${#messages[@]} ]; then
+    msg_idx=$(( ${#messages[@]} - 1 ))
+  fi
+  elapsed=$(( i / 10 ))
+  if [ $elapsed -gt 0 ]; then
+    timer="${elapsed}s"
+  else
+    timer=""
+  fi
+  printf "\r\033[K  \033[36m%s\033[0m \033[2m%s\033[0m%*s\033[2m%s\033[0m" "$frame" "${messages[$msg_idx]}" $((40 - ${#messages[$msg_idx]})) "" "$timer"
+  sleep 0.1
+done
+printf "\r\033[K"
+
+# Result
+printf "  \033[32m✓\033[0m \033[1mX thread\033[0m                                                           \033[2m5.2s\033[0m\n"
 sleep 0.3
-printf "  I mass-deleted the landing page three times\n"
-sleep 0.12
-printf "  before I realized the problem wasn't the design.\n"
-sleep 0.12
+
+# Preview box
 printf "\n"
-sleep 0.12
-printf "  It was the pitch. I'd been describing features\n"
-sleep 0.12
-printf "  nobody asked about to an audience I hadn't defined.\n"
-sleep 0.12
-printf "\n"
-sleep 0.12
-printf "  The story was right there. I just hadn't been\n"
-sleep 0.12
-printf "  reading it.\n"
-sleep 0.12
-printf "\n"
-sleep 0.12
-printf "  Shipped the landing page in one session after that.\n"
-sleep 0.12
-printf "  The copy writes itself when you know what actually\n"
-sleep 0.12
-printf "  happened.\n"
-printf "\n"
-printf "  \033[2m─────────────────────────────────────────────\033[0m\n"
+printf "  \033[2m┌───────────────────────────────────────────────────────────────────┐\033[0m\n"
+printf "  \033[2m│\033[0m 1/ Built a SaaS with Claude Code over 6 weeks. 45 sessions.     \033[2m│\033[0m\n"
+printf "  \033[2m│\033[0m Here's how it actually went — the mass-deleted landing page,    \033[2m│\033[0m\n"
+printf "  \033[2m│\033[0m the API pivot that saved \$200/mo, and the moment that became    \033[2m│\033[0m\n"
+printf "  \033[2m│\033[0m a new tool.                                                     \033[2m│\033[0m\n"
+printf "  \033[2m│\033[0m                                                                 \033[2m│\033[0m\n"
+printf "  \033[2m│\033[0m 2/ Week 1–2: Setup flew. Cookie-based auth, Postgres, Tailwind… \033[2m│\033[0m\n"
+printf "  \033[2m│\033[0m …                                                               \033[2m│\033[0m\n"
+printf "  \033[2m└───────────────────────────────────────────────────────────────────┘\033[0m\n"
+sleep 0.3
+printf "  \033[2m→\033[0m .buildarc/tweet.md — paste into X\n"
 printf "\n"
 sleep 3
