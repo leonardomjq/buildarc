@@ -1,8 +1,3 @@
-<!-- logo placeholder: replace with actual logo once designed -->
-<!-- <p align="center">
-  <img src=".github/assets/logo.svg" alt="buildarc" width="200">
-</p> -->
-
 ![CI](https://github.com/leonardomjq/buildarc/actions/workflows/ci.yml/badge.svg)
 [![npm](https://img.shields.io/npm/v/buildarc.svg)](https://npmjs.com/package/buildarc)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
@@ -84,7 +79,7 @@ That's real output. One command, from raw transcripts to a ready-to-post thread 
 ## How it works
 
 ```
-  buildarc v0.1.0
+  buildarc v0.2.2
 
   Reading your Claude Code sessions...
   Found 14 sessions | 47 moments | 12 decisions, 3 pivots

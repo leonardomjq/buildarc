@@ -179,7 +179,7 @@ function parseArgs(argv: string[]): CliOptions {
 function autoDetectProject(): string | null {
   const cwd = process.cwd();
   // Claude projects dir uses encoded path: /Users/foo/bar → -Users-foo-bar
-  const encoded = cwd.replace(/\//g, "-");
+  const encoded = cwd.replace(/[\\/]/g, "-");
   const claudeDir = join(homedir(), ".claude", "projects", encoded);
 
   try {
