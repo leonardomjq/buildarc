@@ -30,7 +30,7 @@
     "node": ">=18"
   },
   "bin": {
-    "buildarc": "./dist/cli.js"
+    "buildarc": "dist/cli.js"
   },
   "files": [
     "dist"
