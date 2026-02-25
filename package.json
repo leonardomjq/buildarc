@@ -32,9 +32,7 @@
   "bin": {
     "buildarc": "dist/cli.js"
   },
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
