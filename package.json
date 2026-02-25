@@ -1,6 +1,6 @@
 {
   "name": "buildarc",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Your build story, recovered. Turn Claude Code sessions into tweet threads, LinkedIn posts, and build journals.",
   "license": "MIT",
   "repository": {
@@ -32,7 +32,9 @@
   "bin": {
     "buildarc": "dist/cli.js"
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
