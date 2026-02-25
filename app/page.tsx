@@ -15,9 +15,8 @@ const OriginCaseStudy = dynamic(() =>
 const CommandBlock = dynamic(() =>
   import("@/components/landing/command-block").then((m) => m.CommandBlock),
 );
-const StickyCta = dynamic(
-  () => import("@/components/landing/sticky-cta").then((m) => m.StickyCta),
-  { ssr: false },
+const StickyCta = dynamic(() =>
+  import("@/components/landing/sticky-cta").then((m) => m.StickyCta),
 );
 
 export default function LandingPage() {
