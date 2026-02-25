@@ -42,6 +42,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# Launch assets (private)
+/launch
+
 # Claude Code
 .claude/
 
