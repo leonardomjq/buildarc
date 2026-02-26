@@ -21,7 +21,7 @@ const sections = [
     label: "03",
     title: "Landing Page",
     content:
-      "This website (buildarc-ebon.vercel.app) may use privacy-friendly, cookieless analytics to measure page views. No personal information is collected or shared with third parties.",
+      "This website (buildarc.dev) may use privacy-friendly, cookieless analytics to measure page views. No personal information is collected or shared with third parties.",
   },
   {
     label: "04",

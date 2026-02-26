@@ -30,6 +30,15 @@ export function CommandBlock() {
           <span className="stamp-seal text-accent-green">Runs Locally</span>
         </motion.div>
 
+        {/* Re-run hint */}
+        <motion.div
+          className="font-mono text-xs text-text-dim text-center"
+          {...viewportFadeIn(0.3)}
+        >
+          Run once to extract. Run again with <code className="text-text-muted">--tweet</code> to
+          generate.
+        </motion.div>
+
         {/* Secondary links */}
         <motion.div
           className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4"

@@ -27,7 +27,7 @@ const lora = Lora({
   variable: "--font-serif",
 });
 
-const BASE_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://buildarc-ebon.vercel.app";
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://www.buildarc.dev";
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),

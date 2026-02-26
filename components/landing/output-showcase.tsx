@@ -115,7 +115,7 @@ function JournalContent() {
           <div className="size-1.5 rounded-full bg-accent-amber/50" />
           <div className="size-1.5 rounded-full bg-accent-blue/50" />
         </div>
-        <span className="font-mono text-[10px] text-text-dim">BUILDLOG.md</span>
+        <span className="font-mono text-[10px] text-text-dim">BUILDARC.md</span>
       </div>
       <div className="font-mono text-xs text-text leading-relaxed space-y-3">
         <div>
@@ -217,8 +217,13 @@ export function OutputShowcase() {
         </motion.div>
 
         {/* Mechanism note */}
-        <motion.div className="mt-6 font-mono text-xs text-text-dim" {...viewportFadeIn(0.3)}>
-          One command. 45 sessions &rarr; 4-tweet thread in 3 seconds.
+        <motion.div className="mt-6 space-y-1" {...viewportFadeIn(0.3)}>
+          <p className="font-mono text-xs text-text-dim">
+            One command. 45 sessions &rarr; a thread you can post.
+          </p>
+          <p className="font-mono text-xs text-text-dim/60">
+            Extraction finds the moments. Your Claude CLI turns them into a story.
+          </p>
         </motion.div>
       </div>
     </section>
