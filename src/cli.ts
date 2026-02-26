@@ -540,6 +540,9 @@ const SPINNER_MESSAGES: Record<string, string[]> = {
     "Still going — good threads take a minute...",
     "Refining the narrative...",
     "Almost there...",
+    "Writing is rewriting...",
+    "Yeah, this is normal — first run warms up Claude...",
+    "Your build story didn't write itself in a day either...",
   ],
   linkedin: [
     "Reading your moments...",
@@ -552,6 +555,9 @@ const SPINNER_MESSAGES: Record<string, string[]> = {
     "Still going — good posts take a minute...",
     "Refining the narrative...",
     "Almost there...",
+    "Writing is rewriting...",
+    "Yeah, this is normal — first run warms up Claude...",
+    "Your build story didn't write itself in a day either...",
   ],
   journal: [
     "Reading your moments...",
@@ -564,6 +570,9 @@ const SPINNER_MESSAGES: Record<string, string[]> = {
     "Still going — good journals take a minute...",
     "Refining the narrative...",
     "Almost there...",
+    "Writing is rewriting...",
+    "Yeah, this is normal — first run warms up Claude...",
+    "Your build story didn't write itself in a day either...",
   ],
   parallel: [
     "Writing all three at once...",
@@ -574,6 +583,9 @@ const SPINNER_MESSAGES: Record<string, string[]> = {
     "Still going — this takes about a minute...",
     "Refining the narratives...",
     "Almost there...",
+    "Writing is rewriting...",
+    "Yeah, this is normal — first run warms up Claude...",
+    "Your build story didn't write itself in a day either...",
   ],
 };
 
@@ -692,8 +704,6 @@ async function generateSingle(
 
   if (!quiet) {
     log("");
-    log(dim("  This usually takes 60–90 seconds — Claude is writing, not fetching."));
-    log("");
     stopSpinner = startSpinner(SPINNER_MESSAGES[fmt] ?? [`Writing your ${label}...`]);
   }
 
@@ -745,8 +755,6 @@ async function generateParallel(
   let stopSpinner: (() => void) | null = null;
 
   if (!quiet) {
-    log("");
-    log(dim("  This usually takes 60–90 seconds — Claude is writing, not fetching."));
     log("");
     stopSpinner = startSpinner(SPINNER_MESSAGES.parallel);
   }
